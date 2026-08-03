@@ -1,0 +1,228 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": [
+  {
+   "name": "crlf",
+   "input": "@7 decision archived I0 T0.5 2025-01-02\r\n~ user\r\n标题\r\n\r\n正文\r\n",
+   "status": "ok",
+   "canonical": "@7 decision archived I0 T0.5 F0.0 2025-01-02\n~ user\n# format 1\n标题\n\n正文\n",
+   "semantic_hash": "41baa3499242c192fbc7b5341b2910dd3aeca96afd7fd53bc8455717e0131321",
+   "entities": [],
+   "supersedes": [],
+   "trust": 1,
+   "lock": false,
+   "scope": ""
+  },
+  {
+   "name": "directives-shuffled",
+   "input": "@5 fact published I1 T2 2026-05-06\n~ user\n# format 1\n# lock\n标题\n",
+   "status": "ok",
+   "canonical": "@5 fact published I1 T2 F0.0714 2026-05-06\n~ user\n# format 1\n# lock\n标题\n",
+   "semantic_hash": "6d13ad41848166bf1f5a13f26924ec84c676534ac524473ad0eaa727ba57f4bc",
+   "entities": [],
+   "supersedes": [],
+   "trust": 4,
+   "lock": true,
+   "scope": ""
+  },
+  {
+   "name": "freshness-forms",
+   "input": "@3 fact published I1 T2 F1 2026-08-02\n~ user\n标题\n",
+   "status": "ok",
+   "canonical": "@3 fact published I1 T2 F1.0 2026-08-02\n~ user\n# format 1\n标题\n",
+   "semantic_hash": "3ee81a86c94abe32900327635a117021825792c9f41c306fb2d3cf01d8c17ecb",
+   "entities": [],
+   "supersedes": [],
+   "trust": 4,
+   "lock": false,
+   "scope": ""
+  },
+  {
+   "name": "full",
+   "input": "@42 skill candidate I2 T1.5 F0.5 2026-07-20\n= Beta, alpha, Alpha,  部署 \n~ self:opencode\n# format 1\n# lock\n# scope project:demo\n# last-used 2026-08-01\n# valid-from 2026-01-01\n# valid-to 2026-12-31\n# supersedes @9, @3, @7\n标题行\n正文一\n\n正文三\n",
+   "status": "ok",
+   "canonical": "@42 skill candidate I2 T1.5 F0.9704 2026-07-20\n= alpha, Beta, 部署\n~ self:opencode\n# format 1\n# lock\n# scope project:demo\n# last-used 2026-08-01\n# valid-from 2026-01-01\n# valid-to 2026-12-31\n# supersedes @3, @7, @9\n标题行\n正文一\n\n正文三\n",
+   "semantic_hash": "9bc690f18f06d3e50564c4aca36f2f63b8b5ec95fea83aa4ffac90e2cbb340c2",
+   "entities": [
+    "alpha",
+    "Beta",
+    "部署"
+   ],
+   "supersedes": [
+    9,
+    3,
+    7
+   ],
+   "trust": 3,
+   "lock": true,
+   "scope": "project:demo"
+  },
+  {
+   "name": "minimal",
+   "input": "@1 fact published I3 T3 2026-08-01\n标题。\n",
+   "status": "ok",
+   "canonical": "@1 fact published I3 T3 F0.9704 2026-08-01\n~ user\n# format 1\n标题。\n",
+   "semantic_hash": "480fc555cb3b98e7849b0c04631fc8dae917933b85717b71ab5a609508fa8ca7",
+   "entities": [],
+   "supersedes": [],
+   "trust": 6,
+   "lock": false,
+   "scope": ""
+  },
+  {
+   "name": "no-trailing-lf",
+   "input": "@9 fact tombstone I0 T0 2025-01-01\n~ system:deleted\n已删除的记忆 9。",
+   "status": "ok",
+   "canonical": "@9 fact tombstone I0 T0 F0.0 2025-01-01\n~ system:deleted\n# format 1\n已删除的记忆 9。\n",
+   "semantic_hash": "87d75f6329e0620887cff451e404ffd3e721b98f6523dde29c4437ccb82a26e0",
+   "entities": [],
+   "supersedes": [],
+   "trust": 0,
+   "lock": false,
+   "scope": ""
+  },
+  {
+   "name": "unicode",
+   "input": "@11 fact published I2 T2.5 2026-02-03\n= Σίσυφος, ﬁle\n~ user\n标题 ẞ 混合。\n正文 café。\n",
+   "status": "ok",
+   "canonical": "@11 fact published I2 T2.5 F0.0045 2026-02-03\n= ﬁle, Σίσυφος\n~ user\n# format 1\n标题 ẞ 混合。\n正文 café。\n",
+   "semantic_hash": "1415e620b6d550d22dfb75a2275b858450ba6687960c4673deb2d1d39a805eb3",
+   "entities": [
+    "ﬁle",
+    "Σίσυφος"
+   ],
+   "supersedes": [],
+   "trust": 5,
+   "lock": false,
+   "scope": ""
+  },
+  {
+   "name": "bad-date",
+   "input": "@1 fact published I3 T3 2026-13-40\n~ user\n标题\n",
+   "status": "error",
+   "error": "updated 必须是 YYYY-MM-DD，收到 '2026-13-40'"
+  },
+  {
+   "name": "bad-header",
+   "input": "not-a-header\n标题\n",
+   "status": "error",
+   "error": "卡头非法。首行必须形如：@<id> <fact|decision|skill> <candidate|published|archived|tombstone> I<0-3> T<0|0.5|…|3> <YYYY-MM-DD>"
+  },
+  {
+   "name": "bad-last-used",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# last-used 昨日\n标题\n",
+   "status": "error",
+   "error": "last-used 必须是 YYYY-MM-DD，收到 '昨日'"
+  },
+  {
+   "name": "bad-status",
+   "input": "@1 fact weird I3 T3 2026-08-01\n~ user\n标题\n",
+   "status": "error",
+   "error": "状态必须是 ['archived', 'candidate', 'published', 'tombstone'] 之一，收到 'weird'"
+  },
+  {
+   "name": "bad-type",
+   "input": "@1 unknown published I3 T3 2026-08-01\n~ user\n标题\n",
+   "status": "error",
+   "error": "类型必须是 ['decision', 'fact', 'skill'] 之一，收到 'unknown'"
+  },
+  {
+   "name": "blank-before-title",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n\n标题\n",
+   "status": "error",
+   "error": "标题前不允许空行"
+  },
+  {
+   "name": "bom",
+   "input": "﻿@1 fact published I3 T3 2026-08-01\n标题\n",
+   "status": "error",
+   "error": ".mem v1 禁止 UTF-8 BOM"
+  },
+  {
+   "name": "dup-entities",
+   "input": "@1 fact published I3 T3 2026-08-01\n= a\n= b\n标题\n",
+   "status": "error",
+   "error": "= 实体指令只能出现一次"
+  },
+  {
+   "name": "dup-format",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# format 1\n# format 1\n标题\n",
+   "status": "error",
+   "error": "# format 只能出现一次"
+  },
+  {
+   "name": "dup-source",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ a\n~ b\n标题\n",
+   "status": "error",
+   "error": "~ 来源指令只能出现一次"
+  },
+  {
+   "name": "empty-source",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ \n标题\n",
+   "status": "error",
+   "error": "~ 来源不能为空"
+  },
+  {
+   "name": "id-over",
+   "input": "@9007199254740992 fact published I3 T3 2026-08-01\n~ user\n标题\n",
+   "status": "error",
+   "error": "卡片编号超过安全上限 9007199254740991"
+  },
+  {
+   "name": "lone-cr",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n标题\r正文\n",
+   "status": "error",
+   "error": ".mem v1 只接受 LF 或完整 CRLF 换行"
+  },
+  {
+   "name": "missing-title",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n",
+   "status": "error",
+   "error": "缺少自足标题行（卡头与指令行之后的第一行正文）"
+  },
+  {
+   "name": "nul",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n标\u0000题\n",
+   "status": "error",
+   "error": ".mem v1 禁止 NUL 字符"
+  },
+  {
+   "name": "supersedes-dup",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# supersedes @3, @3\n标题\n",
+   "status": "error",
+   "error": "supersedes 不得包含重复 id"
+  },
+  {
+   "name": "supersedes-over",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# supersedes @9007199254740992\n标题\n",
+   "status": "error",
+   "error": "supersedes 引用超过安全上限 9007199254740991"
+  },
+  {
+   "name": "supersedes-self",
+   "input": "@2 fact published I3 T3 2026-08-01\n~ user\n# supersedes @2\n标题\n",
+   "status": "error",
+   "error": "卡片不能 supersedes 自己"
+  },
+  {
+   "name": "supersedes-zero",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# supersedes @0\n标题\n",
+   "status": "error",
+   "error": "supersedes 只能引用正整数卡片 id"
+  },
+  {
+   "name": "unknown-directive",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# frobnicate x\n标题\n",
+   "status": "error",
+   "error": "未知 .mem v1 指令：# frobnicate x"
+  },
+  {
+   "name": "valid-range",
+   "input": "@1 fact published I3 T3 2026-08-01\n~ user\n# valid-from 2026-09-01\n# valid-to 2026-01-01\n标题\n",
+   "status": "error",
+   "error": "valid-from 不得晚于 valid-to"
+  }
+ ]
+}

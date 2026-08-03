@@ -1,0 +1,44 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": {
+  "semantic": [
+   {
+    "mem": "@1 fact published I3 T3 2026-08-01\n= Alpha, beta\n~ user\n标题一\n正文。\n",
+    "semantic_hash": "a55f83da848d191c9931adf51d2439a313202a1fc00b4529bbde4f6608f191b8"
+   },
+   {
+    "mem": "@2 decision candidate I2 T1.5 2026-07-31\n~ self:test\n# lock\n# scope global\n# supersedes @1\n标题二\n",
+    "semantic_hash": "d5dba12c3fcc9e6512ea33aaf84c994ab2e399acc26df7eb1f82d2b1de76101e"
+   },
+   {
+    "mem": "@3 skill archived I0 T0 2025-01-01\n~ system:deleted\n已删除的记忆 3。\n",
+    "semantic_hash": "72c103e479b506757c9de2c3356697b4fe871a8d4c725c10da43d14d1e4e18ce"
+   }
+  ],
+  "source_collection": "fd276343f1518cb46c9db340e41375e5228abd2b4fb4c90b5ca36f5e3148947c",
+  "journal_checksum": "3c7ee883fd24fffd56588917da28f12684399bfd150f67295583a61c9d6a9a8e",
+  "journal_payload": {
+   "version": 1,
+   "uuid": "00000000-0000-4000-8000-000000000001",
+   "operation": "create-card",
+   "created_at_ns": 1754200000000000000,
+   "card_ids": [
+    1
+   ],
+   "target_generation": 7,
+   "files": [
+    {
+     "path": "cards/0001.mem",
+     "before_exists": false,
+     "after_exists": true,
+     "before_hash": "",
+     "after_hash": "171d66d74ce44f071d5c23de7e8dadc9d0261f54d35429f265172c329e563479",
+     "before_b64": "",
+     "after_b64": "QDEgZmFjdCBwdWJsaXNoZWQgSTMgVDMgMjAyNi0wOC0wMQo9IEFscGhhLCBiZXRhCn4gdXNlcgrmoIfpopjkuIAK5q2j5paH44CCCg=="
+    }
+   ]
+  }
+ }
+}

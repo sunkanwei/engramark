@@ -1,0 +1,6 @@
+#!/bin/sh
+# Stable public entry point for the bundled uninstaller.
+set -eu
+
+SCRIPT_ROOT="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
+exec "$SCRIPT_ROOT/bin/uninstall.sh" "$@"

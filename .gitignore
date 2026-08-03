@@ -1,0 +1,48 @@
+# 个人记忆与持久状态
+/cards/*
+!/cards/.gitkeep
+/state/
+/raw/
+/logs/
+
+# 本机派生物与固定运行时
+/cache/
+/runtime/
+/dist/
+/.release-cache/
+
+# 旧版路径（仅迁移前存在；含真实记忆或缓存，防御性保留）
+/index.sqlite*
+/radar.dict
+/candidates/
+/locks/
+
+# 用户自行生成的备份与导出
+/backups/
+/exports/
+/snapshots/
+
+# 本机安装记录与临时文件
+/install-manifest.txt
+/uninstall.sh
+.env
+.env.*
+!.env.example
+*.log
+*.pyc
+__pycache__/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage*
+htmlcov/
+.idea/
+.vscode/
+.serena/
+.DS_Store
+*.tmp
+*.lock
+!rust/Cargo.lock
+
+# Rust build artifacts
+rust/target/

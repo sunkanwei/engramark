@@ -1,0 +1,41 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": {
+  "first": {
+   "lines": [
+    "记忆提示：记忆 1：OrchidUI（口头称 core）= ~/Library/.../user_default/OrchidUI/，示例扩展。（与“OrchidUI”相关） — 构建脚本位于 scripts/build.py，产物写入受控输出目录。",
+    "记忆提示：记忆 3：OrchidUI Web 当前使用示例下载域名 downloads.example.com。（与“OrchidUI”相关） — Mac 与 Windows 的 CEF 组件地址由 current.json 清单提供。",
+    "记忆提示：记忆 2：部署 OrchidUI 改动的标准流程。（与“OrchidUI”相关） — 1. 签名构建 → 2. 经 SafeDeploy 部署 ! 禁止绕过 SafeDeploy 直接调用底层设备接口"
+   ],
+   "hits": [
+    {
+     "entity": "OrchidUI",
+     "id": 1
+    },
+    {
+     "entity": "OrchidUI",
+     "id": 3
+    },
+    {
+     "entity": "OrchidUI",
+     "id": 2
+    }
+   ],
+   "context": "Engramark 长期记忆命中（需要详情可调用 MCP memory_get）：\n记忆提示：记忆 1：OrchidUI（口头称 core）= ~/Library/.../user_default/OrchidUI/，示例扩展。（与“OrchidUI”相关） — 构建脚本位于 scripts/build.py，产物写入受控输出目录。\n记忆提示：记忆 3：OrchidUI Web 当前使用示例下载域名 downloads.example.com。（与“OrchidUI”相关） — Mac 与 Windows 的 CEF 组件地址由 current.json 清单提供。\n记忆提示：记忆 2：部署 OrchidUI 改动的标准流程。（与“OrchidUI”相关） — 1. 签名构建 → 2. 经 SafeDeploy 部署 ! 禁止绕过 SafeDeploy 直接调用底层设备接口"
+  },
+  "second_cooldown": {
+   "lines": [
+    "记忆提示：记忆 11：NexusCore2 模块负责检索编排，OrchidUI 依赖它。（与“OrchidUI”相关）"
+   ],
+   "hits": [
+    {
+     "entity": "OrchidUI",
+     "id": 11
+    }
+   ],
+   "context": "Engramark 长期记忆命中（需要详情可调用 MCP memory_get）：\n记忆提示：记忆 11：NexusCore2 模块负责检索编排，OrchidUI 依赖它。（与“OrchidUI”相关）"
+  }
+ }
+}

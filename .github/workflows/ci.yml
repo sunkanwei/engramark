@@ -1,0 +1,91 @@
+name: 验证
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  quality:
+    name: 静态与供应链门禁
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
+      - uses: dtolnay/rust-toolchain@7b1c0f8b3b5b9d6a7706c6c68a5b2c26d00dd1c0 # stable
+        with:
+          toolchain: "1.97.1"
+          components: rustfmt, clippy
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - name: 检查仓库隐私、文档与脚本
+        run: |
+          python3 tests/test_repository_privacy.py
+          python3 tests/test_documentation.py
+          uvx ruff==0.15.4 check packaging tests
+          shellcheck install.sh bin/install.sh bin/uninstall bin/uninstall.sh
+          git diff --check
+      - name: Rust 格式与静态检查
+        working-directory: rust
+        run: |
+          cargo fmt --check
+          cargo clippy --all-targets --locked -- -D warnings
+      - name: 依赖漏洞、许可证与来源检查
+        uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.0.15
+        with:
+          command: check
+          manifest-path: rust/Cargo.toml
+          arguments: --all-features
+          command-arguments: advisories licenses sources
+
+  native:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS 14 arm64 基线
+            os: macos-14
+            target: macos-arm64
+          - name: macOS 15 arm64 当前版
+            os: macos-15
+            target: macos-arm64
+          - name: macOS 14 x86_64 基线
+            os: macos-14-large
+            target: macos-x86_64
+          - name: macOS 15 x86_64 当前版
+            os: macos-15-intel
+            target: macos-x86_64
+          - name: Ubuntu 22.04 / glibc 2.35 基线
+            os: ubuntu-22.04
+            target: linux-x86_64
+          - name: Ubuntu 24.04 当前版
+            os: ubuntu-24.04
+            target: linux-x86_64
+          - name: Windows Server 2022 基线
+            os: windows-2022
+            target: windows-x86_64
+          - name: Windows Server 2025 当前版
+            os: windows-2025
+            target: windows-x86_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
+      - uses: dtolnay/rust-toolchain@7b1c0f8b3b5b9d6a7706c6c68a5b2c26d00dd1c0 # stable
+        with:
+          toolchain: "1.97.1"
+          components: rustfmt, clippy
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "22"
+      - name: 运行完整原生测试
+        run: python tests/run.py
+      - name: 构建并验证本平台安装生命周期
+        run: |
+          python packaging/build_release.py --target ${{ matrix.target }}
+          python tests/test_install_lifecycle.py

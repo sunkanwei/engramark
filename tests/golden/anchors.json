@@ -1,0 +1,155 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": {
+  "cards": [
+   {
+    "name": "cjk",
+    "mem": "@2 fact published I2 T2 2026-08-01\n= 记忆\n~ user\n部署 配置 系统 工具 下载 服务。\n北京 上海 广州 深圳。记忆宫殿。\n",
+    "anchors": [
+     {
+      "value": "记忆",
+      "norm": "记忆",
+      "kind": "manual",
+      "strength": "strong",
+      "manual": true
+     }
+    ],
+    "trigram_text": "部署 配置 系统 工具 下载 服务。\n记忆\n记忆"
+   },
+   {
+    "name": "mixed",
+    "mem": "@1 fact published I3 T3 2026-08-01\n= OrchidUI, 部署, api\n~ user\nOrchidUI 的 SafeDeploy 流程见 https://example.com/docs?v=1 与 downloads.example.com。\n路径 ~/Library/Application Support/core/bin，脚本 scripts/build.py，模块 NexusCore2。\ncode test data file main index 应被停用词过滤。CEF CEF。abc 太短。\n",
+    "anchors": [
+     {
+      "value": "//example.com/docs?v=1",
+      "norm": "//example.com/docs?v=1",
+      "kind": "path",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "build.py",
+      "norm": "build.py",
+      "kind": "domain",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "CEF",
+      "norm": "cef",
+      "kind": "identifier",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "downloads.example.com",
+      "norm": "downloads.example.com",
+      "kind": "domain",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "example.com",
+      "norm": "example.com",
+      "kind": "domain",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "https://example.com/docs?v=1",
+      "norm": "https://example.com/docs?v=1",
+      "kind": "url",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "NexusCore2",
+      "norm": "nexuscore2",
+      "kind": "identifier",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "OrchidUI",
+      "norm": "orchidui",
+      "kind": "manual",
+      "strength": "strong",
+      "manual": true
+     },
+     {
+      "value": "SafeDeploy",
+      "norm": "safedeploy",
+      "kind": "identifier",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "~/Library/Application",
+      "norm": "~/library/application",
+      "kind": "path",
+      "strength": "strong",
+      "manual": false
+     },
+     {
+      "value": "部署",
+      "norm": "部署",
+      "kind": "manual",
+      "strength": "weak",
+      "manual": true
+     }
+    ],
+    "trigram_text": "OrchidUI 的 SafeDeploy 流程见 https://example.com/docs?v=1 与 downloads.example.com。\napi\nOrchidUI\n部署\n//example.com/docs?v=1\nbuild.py\nCEF\ndownloads.example.com\nexample.com\nhttps://example.com/docs?v=1\nNexusCore2\nOrchidUI\nSafeDeploy\n~/Library/Application\n部署\nhttps://example.com/docs?v=1"
+   },
+   {
+    "name": "weak",
+    "mem": "@3 fact published I2 T2 2026-08-01\n= server, build\n~ user\nserver build client core data dev main test web http https json mac url windows zip。\n",
+    "anchors": [
+     {
+      "value": "build",
+      "norm": "build",
+      "kind": "manual",
+      "strength": "weak",
+      "manual": true
+     },
+     {
+      "value": "server",
+      "norm": "server",
+      "kind": "manual",
+      "strength": "weak",
+      "manual": true
+     }
+    ],
+    "trigram_text": "server build client core data dev main test web http https json mac url windows zip。\nbuild\nserver\nbuild\nserver"
+   }
+  ],
+  "ratios": [
+   {
+    "a": "OrchidUI",
+    "b": "OrchidUI",
+    "ratio": 1.0
+   },
+   {
+    "a": "OrchidiUI",
+    "b": "OrchidUI",
+    "ratio": 0.9411764705882353
+   },
+   {
+    "a": "safeDeploy",
+    "b": "SafeDeploy",
+    "ratio": 1.0
+   },
+   {
+    "a": "abcdefgh",
+    "b": "abcxefgh",
+    "ratio": 0.875
+   },
+   {
+    "a": "记忆宫殿",
+    "b": "记忆",
+    "ratio": 0.6666666666666666
+   }
+  ]
+ }
+}

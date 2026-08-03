@@ -1,0 +1,52 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": [
+  {
+   "name": "title-empty",
+   "status": "error",
+   "error": "标题不能为空"
+  },
+  {
+   "name": "title-long",
+   "status": "error",
+   "error": "标题最多 120 个字符"
+  },
+  {
+   "name": "title-newline",
+   "status": "error",
+   "error": "标题必须是单行文本，且不能包含 NUL 字符"
+  },
+  {
+   "name": "body-nul",
+   "status": "error",
+   "error": "正文不能包含 NUL 字符"
+  },
+  {
+   "name": "entity-comma",
+   "status": "error",
+   "error": "实体不能包含逗号、换行或 NUL 字符"
+  },
+  {
+   "name": "entity-long",
+   "status": "error",
+   "error": "单个实体最多 128 个字符"
+  },
+  {
+   "name": "bad-type",
+   "status": "error",
+   "error": "类型只能是 fact、decision 或 skill"
+  },
+  {
+   "name": "scope-bad",
+   "status": "error",
+   "error": "适用范围只能是 global 或 project"
+  },
+  {
+   "name": "scope-project-global",
+   "status": "error",
+   "error": "scope=project 需要可识别的项目目录；请在项目会话中重试，或明确使用 global"
+  }
+ ]
+}

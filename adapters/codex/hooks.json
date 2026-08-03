@@ -1,0 +1,28 @@
+{
+  "description": "Engramark：只检索和注入已有正式记忆，不自动记录会话。首次运行需在 /hooks 中审核信任。",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/engramark/bin/engramark\" hook codex-user-prompt-submit",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/engramark/bin/engramark\" hook codex-session-start",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "radar": {
+    "budget": 3,
+    "ascii_min": 4,
+    "cjk_min": 2,
+    "cooldown_ttl_seconds": 86400,
+    "cooldown_max_entries": 1024,
+    "gist_max_codepoints": 120,
+    "stoplist": [
+      "code", "data", "false", "file", "from", "index", "list", "main",
+      "name", "none", "null", "self", "test", "that", "this", "true", "type", "with"
+    ]
+  },
+  "opencode": {
+    "request_radar_enabled": false,
+    "allow_unverified_version": false
+  },
+  "search": {
+    "rrf_k": 60,
+    "candidate_pool": 80,
+    "query_timeout_ms": 500,
+    "high_threshold": 0.64,
+    "medium_threshold": 0.34,
+    "preview_enabled": true,
+    "preview_max_bytes": 800,
+    "generic_terms": [
+      "地址", "下载", "服务", "项目", "文件", "代码", "配置", "程序", "系统", "工具",
+      "怎么", "如何", "什么", "哪个", "一下", "知道", "记得", "帮我", "请问", "我的",
+      "address", "download", "service", "project", "file", "code", "config", "program",
+      "system", "tool", "where", "what", "which", "please", "know", "remember", "my"
+    ],
+    "weak_anchors": [
+      "api", "app", "build", "client", "core", "data", "dev", "main", "server", "test", "web",
+      "http", "https", "json", "mac", "url", "windows", "zip",
+      "服务", "下载", "项目", "配置", "部署", "构建", "系统", "工具"
+    ]
+  }
+}

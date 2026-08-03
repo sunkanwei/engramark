@@ -1,0 +1,321 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": [
+  {
+   "query": "OrchidUI 的下载地址",
+   "norm": "orchidui 的下载地址",
+   "terms": [
+    {
+     "text": "OrchidUI",
+     "norm": "orchidui",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "的下载地址",
+     "norm": "的下载地址",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "下载",
+     "norm": "下载",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    },
+    {
+     "text": "地址",
+     "norm": "地址",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "如何部署 SafeDeploy？",
+   "norm": "如何部署 safedeploy?",
+   "terms": [
+    {
+     "text": "如何部署",
+     "norm": "如何部署",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "如何",
+     "norm": "如何",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    },
+    {
+     "text": "SafeDeploy",
+     "norm": "safedeploy",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "",
+   "norm": "",
+   "terms": []
+  },
+  {
+   "query": "   ",
+   "norm": "",
+   "terms": []
+  },
+  {
+   "query": "https://example.com/docs",
+   "norm": "https://example.com/docs",
+   "terms": [
+    {
+     "text": "https://example.com/docs",
+     "norm": "https://example.com/docs",
+     "weight": 2.5,
+     "generic": false,
+     "strong": true
+    }
+   ]
+  },
+  {
+   "query": "downloads.example.com",
+   "norm": "downloads.example.com",
+   "terms": [
+    {
+     "text": "downloads.example.com",
+     "norm": "downloads.example.com",
+     "weight": 2.5,
+     "generic": false,
+     "strong": true
+    }
+   ]
+  },
+  {
+   "query": "~/Library/core",
+   "norm": "~/library/core",
+   "terms": [
+    {
+     "text": "Library/core",
+     "norm": "library/core",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "README.md v2.1",
+   "norm": "readme.md v2.1",
+   "terms": [
+    {
+     "text": "README.md",
+     "norm": "readme.md",
+     "weight": 2.5,
+     "generic": false,
+     "strong": true
+    },
+    {
+     "text": "v2.1",
+     "norm": "v2.1",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "a",
+   "norm": "a",
+   "terms": []
+  },
+  {
+   "query": "ab",
+   "norm": "ab",
+   "terms": [
+    {
+     "text": "ab",
+     "norm": "ab",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "测试",
+   "norm": "测试",
+   "terms": [
+    {
+     "text": "测试",
+     "norm": "测试",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "CEF 组件 current.json",
+   "norm": "cef 组件 current.json",
+   "terms": [
+    {
+     "text": "CEF",
+     "norm": "cef",
+     "weight": 2.5,
+     "generic": false,
+     "strong": true
+    },
+    {
+     "text": "组件",
+     "norm": "组件",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "current.json",
+     "norm": "current.json",
+     "weight": 2.5,
+     "generic": false,
+     "strong": true
+    }
+   ]
+  },
+  {
+   "query": "the quick brown fox",
+   "norm": "the quick brown fox",
+   "terms": [
+    {
+     "text": "the",
+     "norm": "the",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "quick",
+     "norm": "quick",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "brown",
+     "norm": "brown",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "fox",
+     "norm": "fox",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "server build",
+   "norm": "server build",
+   "terms": [
+    {
+     "text": "server",
+     "norm": "server",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "build",
+     "norm": "build",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "记忆 宫殿",
+   "norm": "记忆 宫殿",
+   "terms": [
+    {
+     "text": "记忆",
+     "norm": "记忆",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "宫殿",
+     "norm": "宫殿",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "v1.2.3 456",
+   "norm": "v1.2.3 456",
+   "terms": [
+    {
+     "text": "v1.2.3",
+     "norm": "v1.2.3",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    },
+    {
+     "text": "456",
+     "norm": "456",
+     "weight": 1.0,
+     "generic": false,
+     "strong": false
+    }
+   ]
+  },
+  {
+   "query": "!!!@@@###",
+   "norm": "!!!@@@###",
+   "terms": []
+  },
+  {
+   "query": "文件 配置 项目",
+   "norm": "文件 配置 项目",
+   "terms": [
+    {
+     "text": "文件",
+     "norm": "文件",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    },
+    {
+     "text": "配置",
+     "norm": "配置",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    },
+    {
+     "text": "项目",
+     "norm": "项目",
+     "weight": 0.35,
+     "generic": true,
+     "strong": false
+    }
+   ]
+  }
+ ]
+}

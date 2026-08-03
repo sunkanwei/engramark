@@ -1,0 +1,17 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "sha256": {
+  "anchors.json": "8e9e6210de6e7d56e1e9acfe83dd4c9272bf774560a31d6d6ecf2998d8c36ac8",
+  "errors.json": "66fb30a2728e668163d4a0a2b361fe16777ce1e586820572d0b065fb2c5c0b07",
+  "freshness.json": "9160279a50b40af280463b0bc8cfb9447b7c2289a0f945e8610bdf5443d0f59d",
+  "hash.json": "2e1d8c186e68d2700d422fe60564742af0c207a0a69fd399d01e3b46793cde8e",
+  "mem.json": "b9f760e180c507ae9400b918121a5d719da680ac5294e5804b07aaa624103a8c",
+  "normalize.json": "3197df28748cb8da0bb7741f95be3f8fc871adb7c02eee0311a3ca0194145b4e",
+  "query_plan.json": "12e47ebbaf8c60dda884090bd0f82fd66647b3fc5fb416b2a387db0a78d86cc7",
+  "radar.json": "50af288ce3540d976f6e42ce3ca0588fdd1dfc61645c1dab97b2fa8a8bdf7496",
+  "scan.json": "8e8a3be5ea235f60294d4170c8ab0ed4a7b4093c92a7ed12bd4adb22164ff3a6",
+  "search.json": "ac095c3c783515f8c29f1b625393aad669fa45179fc88dde69ec2405a49038d5",
+  "text_ops.json": "8f0e59ced6ace224a8fe6265a4d27636ef079c3ce8143e04383cefd98efa5249"
+ }
+}

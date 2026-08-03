@@ -1,0 +1,257 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": [
+  {
+   "input": "",
+   "normalized": "",
+   "contains_cjk": false
+  },
+  {
+   "input": "  ",
+   "normalized": "",
+   "contains_cjk": false
+  },
+  {
+   "input": "Hello World",
+   "normalized": "hello world",
+   "contains_cjk": false
+  },
+  {
+   "input": "STRASSE",
+   "normalized": "strasse",
+   "contains_cjk": false
+  },
+  {
+   "input": "Straße",
+   "normalized": "strasse",
+   "contains_cjk": false
+  },
+  {
+   "input": "ẞ",
+   "normalized": "ss",
+   "contains_cjk": false
+  },
+  {
+   "input": "ΣΊΣΥΦΟΣ",
+   "normalized": "σίσυφοσ",
+   "contains_cjk": false
+  },
+  {
+   "input": "σίσυφος",
+   "normalized": "σίσυφοσ",
+   "contains_cjk": false
+  },
+  {
+   "input": "Σίσυφος",
+   "normalized": "σίσυφοσ",
+   "contains_cjk": false
+  },
+  {
+   "input": "İstanbul",
+   "normalized": "i̇stanbul",
+   "contains_cjk": false
+  },
+  {
+   "input": "i̇stanbul",
+   "normalized": "i̇stanbul",
+   "contains_cjk": false
+  },
+  {
+   "input": "ﬁle",
+   "normalized": "file",
+   "contains_cjk": false
+  },
+  {
+   "input": "Ⅷ 测试",
+   "normalized": "viii 测试",
+   "contains_cjk": true
+  },
+  {
+   "input": "ＦｕｌｌＷｉｄｔｈ１２３",
+   "normalized": "fullwidth123",
+   "contains_cjk": false
+  },
+  {
+   "input": "café",
+   "normalized": "café",
+   "contains_cjk": false
+  },
+  {
+   "input": "café",
+   "normalized": "café",
+   "contains_cjk": false
+  },
+  {
+   "input": "élan",
+   "normalized": "élan",
+   "contains_cjk": false
+  },
+  {
+   "input": "汉字 混排 ABC",
+   "normalized": "汉字 混排 abc",
+   "contains_cjk": true
+  },
+  {
+   "input": "　全角　空格　",
+   "normalized": "全角 空格",
+   "contains_cjk": true
+  },
+  {
+   "input": "a\tb\nc\rd\u000be\ff",
+   "normalized": "a b c d e f",
+   "contains_cjk": false
+  },
+  {
+   "input": "a\u001cb\u001dc\u001ed\u001fe",
+   "normalized": "a b c d e",
+   "contains_cjk": false
+  },
+  {
+   "input": "ab c",
+   "normalized": "ab c",
+   "contains_cjk": false
+  },
+  {
+   "input": " b᠎c d e f g h　i",
+   "normalized": "b᠎c d e f g h i",
+   "contains_cjk": false
+  },
+  {
+   "input": "a​b",
+   "normalized": "a​b",
+   "contains_cjk": false
+  },
+  {
+   "input": "ὈΔΥΣΣΕΎΣ",
+   "normalized": "ὀδυσσεύσ",
+   "contains_cjk": false
+  },
+  {
+   "input": "Ǆǅǆ",
+   "normalized": "dždždž",
+   "contains_cjk": false
+  },
+  {
+   "input": "Ǉǈǉ",
+   "normalized": "ljljlj",
+   "contains_cjk": false
+  },
+  {
+   "input": "ﬀﬁﬂﬃﬄ",
+   "normalized": "fffiflffiffl",
+   "contains_cjk": false
+  },
+  {
+   "input": "①②③",
+   "normalized": "123",
+   "contains_cjk": false
+  },
+  {
+   "input": "𝕳𝖊𝖑𝖑𝖔",
+   "normalized": "hello",
+   "contains_cjk": false
+  },
+  {
+   "input": "𝟘𝟙𝟚",
+   "normalized": "012",
+   "contains_cjk": false
+  },
+  {
+   "input": "🇨🇳 旗帜",
+   "normalized": "🇨🇳 旗帜",
+   "contains_cjk": true
+  },
+  {
+   "input": "👨‍👩‍👧‍👦 家庭",
+   "normalized": "👨‍👩‍👧‍👦 家庭",
+   "contains_cjk": true
+  },
+  {
+   "input": "ﷺ",
+   "normalized": "صلى الله عليه وسلم",
+   "contains_cjk": false
+  },
+  {
+   "input": "क्ष",
+   "normalized": "क्ष",
+   "contains_cjk": false
+  },
+  {
+   "input": "ÁB̧",
+   "normalized": "áb̧",
+   "contains_cjk": false
+  },
+  {
+   "input": "     ",
+   "normalized": "",
+   "contains_cjk": false
+  },
+  {
+   "input": "混合　　Multiple\t\tSpaces\n\n",
+   "normalized": "混合 multiple spaces",
+   "contains_cjk": true
+  },
+  {
+   "input": "O̲n̲e̲",
+   "normalized": "o̲n̲e̲",
+   "contains_cjk": false
+  },
+  {
+   "input": "ῼΥ",
+   "normalized": "ωιυ",
+   "contains_cjk": false
+  },
+  {
+   "input": "ᾼ",
+   "normalized": "αι",
+   "contains_cjk": false
+  },
+  {
+   "input": "ǰ",
+   "normalized": "ǰ",
+   "contains_cjk": false
+  },
+  {
+   "input": "ΐΰ",
+   "normalized": "ΐΰ",
+   "contains_cjk": false
+  },
+  {
+   "input": "և",
+   "normalized": "եւ",
+   "contains_cjk": false
+  },
+  {
+   "input": "ﬓﬔ",
+   "normalized": "մնմե",
+   "contains_cjk": false
+  },
+  {
+   "input": "ٱ",
+   "normalized": "ٱ",
+   "contains_cjk": false
+  },
+  {
+   "input": "مرحبا بالعالم",
+   "normalized": "مرحبا بالعالم",
+   "contains_cjk": false
+  },
+  {
+   "input": "שלום עולם",
+   "normalized": "שלום עולם",
+   "contains_cjk": false
+  },
+  {
+   "input": "สวัสดี",
+   "normalized": "สวัสดี",
+   "contains_cjk": false
+  },
+  {
+   "input": "カタカナ",
+   "normalized": "カタカナ",
+   "contains_cjk": false
+  }
+ ]
+}

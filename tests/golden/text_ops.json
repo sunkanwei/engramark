@@ -1,0 +1,88 @@
+{
+ "format": 1,
+ "source_commit": "f6bc0987300bdc1ca78e9552c7b8214a634ec5d7",
+ "fake_now": "2026-08-02T12:00:00",
+ "cases": [
+  {
+   "name": "truncate-simple",
+   "input": "abcdefgh",
+   "output": "abcd…"
+  },
+  {
+   "name": "truncate-bytes",
+   "input": "汉字汉字汉字",
+   "output": "汉字…"
+  },
+  {
+   "name": "truncate-both",
+   "input": "ab汉字cd",
+   "output": "ab汉…"
+  },
+  {
+   "name": "truncate-exact",
+   "input": "abcde",
+   "output": "abcde"
+  },
+  {
+   "name": "truncate-zero",
+   "input": "abc",
+   "output": ""
+  },
+  {
+   "name": "excerpt-long",
+   "input": "第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。",
+   "output": "第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内容，包含 OrchidUI 与 downloads.example.com，反复填充直到足够长。第一段内…"
+  },
+  {
+   "name": "excerpt-unicode",
+   "input": "汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字tail",
+   "output": "汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字汉…"
+  },
+  {
+   "name": "excerpt-paragraph",
+   "input": "第一段第一行。\n\n第二段不应出现在 first_paragraph 中。\n第三段。",
+   "output": "第一段第一行。"
+  },
+  {
+   "name": "excerpt-gist",
+   "input": "第一段第一行。\n\n第二段不应出现在 first_paragraph 中。\n第三段。",
+   "output": "第一段第一行。"
+  },
+  {
+   "name": "excerpt-control",
+   "input": "a\u0001bcd\ne",
+   "output": "a b cd e"
+  },
+  {
+   "name": "human-title",
+   "input": "包含 @12 与 @3 的标题",
+   "output": "包含 记忆 12 与 记忆 3 的标题"
+  },
+  {
+   "name": "human-title-long",
+   "input": "很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题",
+   "output": "很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标…"
+  },
+  {
+   "name": "index-line",
+   "output": [
+    "@3 OrchidUI Web 当前 CEF 运行组件下载地址 [fact I3 T3 F1.0，详情 memory_get(3)]",
+    "可能相关：@5 外部来源的低可信旧卡片 [fact I1 T1 F0.0，详情 memory_get(5)]"
+   ]
+  },
+  {
+   "name": "index-line-explain",
+   "output": [
+    "@3 OrchidUI Web 当前 CEF 运行组件下载地址 [fact I3 T3 F1.0，详情 memory_get(3)]（强锚点、原短语；置信度 0.87）"
+   ]
+  },
+  {
+   "name": "radar-line",
+   "output": [
+    "记忆提示：记忆 3：OrchidUI Web 当前 CEF 运行组件下载地址（与“downloads.example.com”相关） — OrchidUI Web 当前使用示例下载域名 downloads.example.com。 Mac 与 Windows 的 CEF 组件地址由 current.json 清单提供。",
+    "记忆提示：记忆 5：外部来源的低可信旧卡片",
+    "记忆提示：记忆 3：OrchidUI Web 当前 CEF 运行组件下载地址（与“xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…”相关） — OrchidUI Web 当前使用示例下载域名 downloads.example.com。 Mac 与 Windows 的 CEF 组件地址由 current.json 清单提供。"
+   ]
+  }
+ ]
+}

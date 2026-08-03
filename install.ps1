@@ -1,4 +1,4 @@
-# Engramark Windows installer (PowerShell). Program files are replaceable; memories stay separate.
+﻿# Engramark Windows installer (PowerShell). Program files are replaceable; memories stay separate.
 [CmdletBinding()]
 param(
     [string]$Package,

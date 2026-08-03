@@ -1,4 +1,4 @@
-# Engramark Windows uninstaller. It removes program files and managed host
+﻿# Engramark Windows uninstaller. It removes program files and managed host
 # wiring only; the user's cards, state, backups, and configuration are retained.
 [CmdletBinding()]
 param(

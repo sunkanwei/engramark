@@ -83,8 +83,13 @@ Windows PowerShell 5.1 or PowerShell 7:
 ```powershell
 $script = Join-Path $env:TEMP "engramark-install.ps1"
 Invoke-WebRequest https://raw.githubusercontent.com/sunkanwei/engramark/main/install.ps1 -OutFile $script
-& $script
+& "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $script
 ```
+
+`-ExecutionPolicy Bypass` applies only to that installer process and does not
+change the user's saved execution policy. An organization-enforced Group Policy
+can still prohibit unsigned scripts; in that case, the device administrator
+must allow the installer.
 
 The package contains one native executable with embedded SQLite. Users do not
 need Python, Homebrew, a database server, or a package manager. Reinstalling or

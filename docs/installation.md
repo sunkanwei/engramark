@@ -37,8 +37,12 @@ Windows x86_64, using either the built-in Windows PowerShell 5.1 or PowerShell
 ```powershell
 $script = Join-Path $env:TEMP "engramark-install.ps1"
 Invoke-WebRequest https://raw.githubusercontent.com/sunkanwei/engramark/main/install.ps1 -OutFile $script
-& $script
+& "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $script
 ```
+
+The bypass applies only to this child process and does not persistently change
+the user's execution policy. A MachinePolicy or UserPolicy enforced by an
+organization still takes precedence and may require administrator approval.
 
 The archive contains one native executable with embedded SQLite. Python,
 Homebrew, a database server, and a package manager are not required.
@@ -148,7 +152,7 @@ macOS and Linux:
 Windows:
 
 ```powershell
-& "$env:LOCALAPPDATA\Engramark\bin\uninstall.ps1"
+& "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Engramark\bin\uninstall.ps1"
 ```
 
 Uninstall removes the program and Engramark-managed host wiring while always

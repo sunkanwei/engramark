@@ -62,7 +62,8 @@ def main() -> int:
         (home / "AppData" / "Local").mkdir(parents=True)
         def installer_for(bundle: Path) -> list[str]:
             return (
-                [powershell, "-NoProfile", "-File", str(ROOT / "install.ps1"),
+                [powershell, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                 str(ROOT / "install.ps1"),
                  "-Package", str(bundle), "-Home", str(home)]
                 if os.name == "nt" else
                 ["sh", str(ROOT / "install.sh"), "--package", str(bundle),
@@ -165,7 +166,8 @@ def main() -> int:
               str(found))
 
         uninstall_command = (
-            [powershell, "-NoProfile", "-File", str(app / "bin" / "uninstall.ps1"),
+            [powershell, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+             str(app / "bin" / "uninstall.ps1"),
              "-Home", str(home)]
             if os.name == "nt" else
             ["sh", str(app / "bin" / "uninstall.sh"), "--home", str(home)]

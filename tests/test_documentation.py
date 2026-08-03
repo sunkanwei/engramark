@@ -18,6 +18,12 @@ LANGUAGE_PAIRS = (
     ("docs/testing.md", "docs/测试与验收.md"),
     ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.zh-CN.md"),
 )
+WINDOWS_INSTALL_DOCS = (
+    "README.md",
+    "README.zh-CN.md",
+    "docs/installation.md",
+    "docs/安装指南.md",
+)
 
 
 def has_local_link(text: str, target: str) -> bool:
@@ -60,6 +66,12 @@ def main() -> int:
             failures.append(f"{english_relative} 缺少简体中文切换链接")
         if not has_local_link(chinese_text, english.name):
             failures.append(f"{chinese_relative} 缺少 English 切换链接")
+    for relative in WINDOWS_INSTALL_DOCS:
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        if "-ExecutionPolicy Bypass -File $script" not in text:
+            failures.append(f"{relative} 的 Windows 安装命令必须兼容客户端默认执行策略")
+        if "Set-ExecutionPolicy" in text:
+            failures.append(f"{relative} 不得要求用户永久修改 PowerShell 执行策略")
     for path in markdown:
         text = path.read_text(encoding="utf-8")
         headings: list[str] = []

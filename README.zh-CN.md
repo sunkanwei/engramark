@@ -61,8 +61,10 @@ Windows PowerShell 5.1 或 PowerShell 7：
 ```powershell
 $script = Join-Path $env:TEMP "engramark-install.ps1"
 Invoke-WebRequest https://raw.githubusercontent.com/sunkanwei/engramark/main/install.ps1 -OutFile $script
-& $script
+& "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $script
 ```
+
+`-ExecutionPolicy Bypass` 只对本次安装子进程生效，不会永久修改用户的执行策略。若单位通过组策略禁止未签名脚本，本命令也不能越过该管理策略，需要设备管理员放行。
 
 安装包只包含一个内嵌 SQLite 的原生程序，不要求用户预装 Python、Homebrew、数据库或包管理器。重新安装和升级只替换程序，独立的记忆目录会保留。
 

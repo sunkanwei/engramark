@@ -2,213 +2,255 @@
 
 **[English](user-guide.md) | [简体中文](使用指南.md)**
 
-This guide covers daily Engramark use and maintenance. For setup, upgrades,
-and uninstall behavior, see [Install and Upgrade](installation.md). For the
-underlying design, see [Architecture](architecture.md).
+This guide is for people using Engramark for the first time. See [Install and Upgrade](installation.md) for setup, upgrades, and uninstall behavior, or [Architecture](architecture.md) for storage and retrieval internals.
 
-## Where memories live
+## How you use Engramark
 
-The memory source is `~/engramark/cards/`, with one `.mem` file per card. This
-is Engramark's own readable card format, not an industry standard. Ordinary
-users do not need to understand or edit it. Candidates, active memories,
-archived memories, and tombstones share the same directory; the first line
-records the state:
+Engramark is not a separate note-taking app. After installation and a restart of Codex or OpenCode, keep talking to your coding assistant as usual. The assistant saves something only when you clearly ask it to remember long term. Later, it can receive a short hint automatically when the memory is relevant, or search explicitly when you ask.
 
-```text
-@8 fact candidate I2 T2 F1.0 2026-01-01
-= Example entity
-~ self:agent
-# format 1
-A self-contained memory title.
-Optional body text.
-```
+Three points cover most daily use:
 
-| State | Meaning | Default search | Radar |
-|---|---|---:|---:|
-| `candidate` | A memory the user explicitly asked to hold for review | No | No |
-| `published` | An active, accepted memory | Yes | Yes |
-| `archived` | Content retained but removed from daily use | No | No |
-| `tombstone` | Used ID retained without the deleted content | No | No |
+- **It does not record every conversation.** Ordinary questions, temporary progress, tool output, and command history are not saved.
+- **Use natural language.** There are no required wake words, and you do not need to call MCP tools yourself.
+- **Memories stay local.** Codex and OpenCode can share the same collection, while project memories remain isolated from other projects.
 
-IDs are never reused. Gaps and tombstones are therefore expected.
+## Complete your first workflow in five minutes
+
+Finish the [installation](installation.md#install), fully quit and reopen Codex or OpenCode, then start a task inside a real project directory.
+
+### 1. Save one project memory
+
+Tell the assistant:
+
+> Remember that this project uses pnpm by default. Save this as a project memory.
+
+The assistant should confirm the save and report the memory ID. This request explicitly selected project scope, so the memory is visible only inside the current project.
+
+### 2. Retrieve it in a new task
+
+Start a new task and say:
+
+> Search Engramark: which package manager does this project use?
+
+The assistant should search first, retrieve the relevant memory, and answer `pnpm`. This checks the host integration, save path, project detection, and retrieval in one short workflow.
+
+### 3. Update it
+
+Continue with:
+
+> Update that memory to say this project uses pnpm 10 by default.
+
+The assistant should update the existing memory instead of creating a conflicting copy. If the target is ambiguous, include the memory ID returned by the save.
+
+### 4. Remove the test memory
+
+If this was only a test, say:
+
+> Delete that test memory.
+
+Deleting an active memory requires another explicit confirmation. Its content is cleared, but the ID is never reused. If the content may be useful later, archive it instead.
 
 ## Daily operations
 
-Speak directly to an assistant connected to Engramark. A write occurs only
-when you clearly express long-term retention intent. Engramark does not use a
-fixed keyword list or restrict the language of the request; it interprets the
-meaning of the whole sentence. Ordinary chat, temporary progress, and tool
-output are not recorded, and the assistant should not repeatedly ask whether
-to save them.
+The phrases below are examples, not commands that must be copied exactly. Engramark interprets the intent of the full request.
 
-- “Remember…”, “save this for later”, “make a note”, “from now on…”, and
-  “don't forget…” save an active memory and receive a short confirmation.
-  Important paths, identity details, and long-term preferences can be locked.
-- “Find the memory about…” returns short natural-language results before
-  details are retrieved by ID.
-- “Save this as a candidate” is the only workflow that creates a candidate.
-- “Show the candidates” lists memories waiting for review.
-- “Accept memory 8” turns a candidate into an active memory.
-- “Reject memory 8” clears a candidate's content and leaves a tombstone.
-- “Archive memory 8” retains the content but removes it from default search and
-  radar.
-- “Delete memory 8” removes active content after a second explicit
-  confirmation; the ID remains as a tombstone.
+| Goal | Example request | What happens |
+|---|---|---|
+| Save a project convention | “Remember that this repository uses pnpm. Save it as a project memory.” | Saves an active memory visible only in the current project |
+| Save a cross-project preference | “From now on, answer me in Chinese by default. Save this as a global preference.” | Saves an active memory available across projects |
+| Retrieve something explicitly | “Search Engramark for the release checklist.” | Searches a small result set, then reads only relevant details |
+| Correct old information | “Update memory 18 to say…” | Changes the existing memory instead of creating a conflict |
+| Review the collection | “Audit my memories for candidates, stale items, or possible conflicts.” | Returns a readable report without modifying anything |
+| Remove something from daily use | “Archive memory 18.” | Keeps the content but removes it from default search and automatic hints |
+| Clear content permanently | “Delete memory 18.” | Requests confirmation, then clears the content while retaining the used ID |
 
-MCP and CLI changes synchronize the cache immediately. Codex and OpenCode do
-not need to restart before a new search can see the change.
+You do not need to restart after a save or edit. Changes made through the assistant or CLI are immediately available to later searches.
 
-Every save or proposal has an explicit scope:
+## What belongs in long-term memory
 
-- `global`: identity, preferences, paths, or workflows that apply across
-  projects.
-- `project`: facts, decisions, or workflows belonging only to the current
-  project.
+Save information that will still affect future decisions and would otherwise need to be explained repeatedly:
 
-A project memory cannot be searched, read, or changed from another project.
-If the host cannot provide a reliable project directory, a project-scoped
-write fails instead of silently becoming global.
+| Content | Example | Suggested scope |
+|---|---|---|
+| Project conventions | “This repository uses pnpm and does not commit an npm lockfile.” | Project |
+| Architecture decisions | “Authentication belongs in the gateway; services do not parse tokens directly.” | Project |
+| Important paths or aliases | “When the team says core, it means `packages/core/`.” | Project |
+| Reusable workflows | “After a schema change, generate a migration and run compatibility checks.” | Project |
+| Cross-project preferences | “Give me a proposal and wait for confirmation before high-risk edits.” | Global |
+| Stable identity or environment facts | “My primary development machine uses Apple Silicon.” | Global |
 
-If Codex does not provide a project root to MCP, run this once in a trusted
-project directory:
+Avoid saving:
+
+- temporary progress, one-task todos, and intermediate conclusions;
+- ordinary facts that are always available from source code or authoritative documentation;
+- large logs, complete conversations, build output, or unedited source material;
+- unverified guesses, unless you explicitly want a candidate for later review;
+- passwords, access tokens, private keys, or other credentials. Memories are local, but retrieved content still enters the coding assistant's context.
+
+A good memory is self-contained and remains understandable later. Prefer “After a schema change, generate a migration and run compatibility checks” over “Do it this way next time.”
+
+## Project or global scope
+
+Ask one question: **should this still apply after switching to another project?**
+
+- If not, use **project scope**. Repository conventions, directory aliases, architecture decisions, and project workflows normally belong here.
+- If yes, use **global scope**. Personal communication preferences, cross-project habits, and stable environment facts normally belong here.
+
+Every save must have an explicit scope. Project memories cannot be searched, read, changed, or deleted from other projects. If the host cannot identify a reliable project root, a project save fails instead of silently becoming global.
+
+## Automatic recall and explicit search
+
+### Explicit search is the reliable path
+
+When retrieval matters, tell the assistant to search Engramark. Include a project name, component, path, technology, or decision topic when possible:
+
+> Search Engramark for the database migration checks.
+
+A vague prompt such as “What did we do last time?” may not provide enough evidence. Engramark reports insufficient evidence instead of presenting a weak association as a remembered fact.
+
+### Automatic hints depend on the host
+
+- **Codex:** installed wiring can scan the local index when an ordinary request is submitted. A match provides at most three short hints; the assistant still fetches details only when needed. A miss adds no context.
+- **OpenCode:** explicit MCP search is always available. The automatic request radar is disabled by default because its hints may be stored with conversation messages; enable it only after accepting that behavior.
+
+Automatic recall is a convenience, not a guarantee that every related prompt will match. Ask for an explicit search when the answer matters.
+
+## Candidate memories are optional
+
+A candidate is not a required step before every save. Use it only when you are unsure whether information deserves long-term retention:
+
+> Save this as a candidate: releases may need a full performance test. I will confirm later.
+
+Candidates stay out of default search and automatic hints. Later you can:
+
+- say “Audit my memories” to find pending candidates and other items that may need attention;
+- say “Make memory 18 an active memory” to move it into daily use;
+- say “Reject candidate memory 18” to clear its content.
+
+Engramark does not create candidates merely because something looks important, and it does not repeatedly ask whether to save ordinary conversation.
+
+## Correct, archive, or delete
+
+- **The information remains valid but its wording or details changed:** update the existing memory.
+- **It is not useful now but may matter later:** archive it. The content remains, but default search and automatic hints ignore it.
+- **It should no longer be retained:** delete it. Deletion requires explicit confirmation and leaves only the non-reusable ID.
+- **A real outcome proves a memory correct or incorrect:** tell the assistant about the evidence. Trust feedback is recorded only when concrete evidence exists.
+
+Important paths, identity details, and long-term preferences can be locked when saved. A locked memory is protected from automatic trust reduction, but you can still explicitly update, archive, or delete it.
+
+## Back up and restore
+
+Do not copy a live SQLite cache. Use Engramark's consistent snapshot command.
+
+macOS and Linux:
+
+```sh
+~/.local/share/engramark/bin/engramark backup /path/to/new-backup
+```
+
+Windows PowerShell:
+
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" backup "D:\Backups\engramark"
+```
+
+A snapshot contains the text source, durable ID state, and an integrity manifest, not the live cache. Before rollback, Engramark validates the snapshot and creates a safety snapshot of the current state. IDs created after the snapshot become tombstones, and the high-water mark never decreases.
+
+macOS and Linux:
+
+```sh
+~/.local/share/engramark/bin/engramark rollback /path/to/snapshot --confirm
+```
+
+Windows PowerShell:
+
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" rollback "D:\Backups\engramark" --confirm
+```
+
+## If the assistant does not remember
+
+Check these items in order:
+
+1. **Restart the host.** After installation or an upgrade, an old task may still use the previous wiring.
+2. **Ask for an explicit search.** OpenCode's automatic radar is off by default, and Codex automatic hints may miss a prompt with too few clues.
+3. **Check the scope.** A project memory is available only from its original project.
+4. **Use a more specific query.** Include the project, component, path, or decision topic instead of asking about “that thing from last time.”
+5. **Run the full diagnosis.** It checks cards, durable ID state, caches, and retrieval capabilities.
+
+macOS and Linux:
+
+```sh
+~/.local/share/engramark/bin/engramark diagnose --full
+```
+
+Windows PowerShell:
+
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" diagnose --full
+```
+
+If diagnosis reports a pending transaction, run recovery. It inspects the transaction and idempotently replays any steps that still need to complete.
+
+macOS and Linux:
+
+```sh
+~/.local/share/engramark/bin/engramark recover
+```
+
+Windows PowerShell:
+
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" recover
+```
+
+If Codex does not provide a reliable project root, enable a project override from a trusted project directory, then start a new Codex task.
+
+macOS and Linux:
 
 ```sh
 ~/.local/share/engramark/bin/engramark host-setup \
   project-enable --project "$PWD"
 ```
 
-Remove that project override with:
+Windows PowerShell:
 
-```sh
-~/.local/share/engramark/bin/engramark host-setup \
-  project-disable --project "$PWD"
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" host-setup `
+  project-enable --project (Get-Location).Path
 ```
 
-The command manages only the `mcp_servers.engramark.cwd` block in the
-project's `.codex/config.toml`. It stops rather than overwriting an existing
-entry with the same name. Open a new Codex task for the change to take effect.
+Replace `project-enable` with `project-disable` to remove the override. The command manages only Engramark's block in the project's `.codex/config.toml`. It stops instead of overwriting an existing entry with the same name.
 
-## Advanced maintenance: edit card files
+## OpenCode automatic hints
 
-Direct editing of `cards/*.mem` is recommended only for manual repair or bulk
-maintenance. Follow these rules:
+Explicit MCP search in OpenCode requires no extra setting. Enable `opencode.request_radar_enabled` only if you accept that short memory hints may be stored with OpenCode conversation messages, then restart OpenCode. The configuration file is `~/engramark/engramark.json` on macOS and Linux, or `%USERPROFILE%\engramark\engramark.json` on Windows.
 
-- Use UTF-8 without BOM and LF endings; the reader also accepts complete CRLF
-  files.
-- The first line must contain the ID, type, state, importance, trust, and date.
-- Trust accepts only `0`, `0.5`, `1`, `1.5`, `2`, `2.5`, and `3`.
-- `=`, `~`, and `#` before the title are structural directives; unknown
-  directives are rejected.
-- Body text after the title is preserved byte-for-byte with respect to blank
-  lines, trailing spaces, and Unicode.
-- Unicode normalization is used for retrieval and does not rewrite body text.
-- Entities are deduplicated by normalized value. Entity order has no meaning;
-  body order does.
+The automatic radar handles only ordinary text submitted directly by the App editor. It skips slash commands, expanded attachments, synthetic text, and ignored text. It does not record chat or tool history and never creates memories. Unverified versions remain disabled by default; `allow_unverified_version` is only for temporary compatibility testing and should return to `false` afterwards.
 
-Rebuild the cache after a manual edit:
+## Data location and advanced maintenance
+
+The source of truth lives in `~/engramark/cards/` on macOS and Linux, or `%USERPROFILE%\engramark\cards\` on Windows, with one `.mem` file per memory. `.mem` is Engramark's own readable text format, not an industry standard. Ordinary users do not need to understand or edit it.
+
+The internal states mean:
+
+| Internal state | User-facing meaning | Default search | Automatic hints |
+|---|---|---:|---:|
+| `candidate` | Waiting for review | No | No |
+| `published` | Active memory used in daily work | Yes | Yes |
+| `archived` | Retained but removed from daily use | No | No |
+| `tombstone` | Content cleared; used ID retained | No | No |
+
+Edit `cards/*.mem` directly only for manual repair or bulk maintenance. Files must use UTF-8 without BOM and LF line endings. Header fields, directives, and value ranges must remain valid; body order and Unicode content are preserved. After a manual edit, rebuild the derived cache:
 
 ```sh
 ~/.local/share/engramark/bin/engramark rebuild
 ```
 
-This is the consistency boundary between manual source edits and the system's
-derived index.
+Windows PowerShell:
 
-## Diagnose and recover
-
-```sh
-# Quick diagnosis
-~/.local/share/engramark/bin/engramark diagnose
-
-# Full cache and business-invariant checks
-~/.local/share/engramark/bin/engramark diagnose --full
-
-# Regenerate the cache from the card source
-~/.local/share/engramark/bin/engramark rebuild
-
-# Inspect and recover pending transactions
-~/.local/share/engramark/bin/engramark recover
+```powershell
+& "$env:LOCALAPPDATA\Engramark\bin\engramark.exe" rebuild
 ```
 
-Explicit retrieval reports corrupt databases, lock timeouts, and manual
-conflicts instead of presenting them as “no match.” Automatic hooks fail open:
-they skip injection and write diagnostics without blocking the host.
-
-## Back up and roll back
-
-Do not copy an active SQLite cache directly. Create a consistent snapshot:
-
-```sh
-~/.local/share/engramark/bin/engramark backup /path/to/new-backup
-```
-
-A snapshot contains only:
-
-- `cards/`;
-- `id-sequence`;
-- `manifest.json`.
-
-Roll back with:
-
-```sh
-~/.local/share/engramark/bin/engramark rollback /path/to/snapshot --confirm
-```
-
-Before replacement, rollback validates the manifest, card count, ID high-water
-mark, and complete source-set hash, then creates a safety snapshot of the
-current state. IDs created after the snapshot become tombstones, and the
-high-water mark never decreases.
-
-## Codex and OpenCode
-
-- **Codex:** a hook can scan the precompiled radar during user input and inject
-  a small number of relevant, natural-language memory hints.
-- **OpenCode:** installation adds a minimal request-radar plugin, but it is
-  disabled by default. MCP search remains available. If you accept that short
-  indexes will be stored with OpenCode conversation messages, set
-  `opencode.request_radar_enabled` to `true` in
-  `~/engramark/engramark.json` and restart OpenCode. Disabling it also requires
-  a restart. Unverified OpenCode versions remain disabled by default;
-  `allow_unverified_version` is only for temporary compatibility testing and
-  should return to `false` afterwards.
-- Both hosts use the same cards, cache, and native executable.
-
-Radar hints include a bounded first-paragraph gist after the title and match
-reason. The complete injected block has a strict byte limit. During explicit
-`memory_search`, only the top final high-confidence result can receive a
-longer preview; other results and SessionStart still use short summaries.
-Hints and previews do not update `last-used`. Only an explicit detail read does.
-
-OpenCode automatic radar handles only ordinary text submitted directly by the
-App editor. It skips slash commands, expanded attachments, synthetic text,
-and ignored text. It never records chat or tool history and never creates an
-active or candidate memory. A failure merely skips injection and does not
-affect the original message or explicit MCP.
-
-## Git and privacy
-
-Real cards, state, caches, logs, and local runtime files are excluded by
-`.gitignore`. The retired `raw/` directory remains ignored to keep historical
-session data out of the repository. Never use `git add -f` to bypass these
-rules.
-
-Before making a repository public:
-
-```sh
-cd /path/to/engramark-source
-git status --short --ignored
-git check-ignore cards/0001.mem state/id-sequence cache/memory.mcache
-python3 tests/test_repository_privacy.py
-```
-
-## Uninstall
-
-Uninstall removes the program and host wiring while preserving all memories:
-
-```sh
-~/.local/share/engramark/bin/uninstall
-```
-
-Engramark intentionally has no automatic delete-memories option. If the
-private data is no longer needed, remove `~/engramark/` manually after
-confirming a backup. Reinstallation reconnects the preserved data.
+See [Architecture](architecture.md) for the complete format, invariants, and recovery model.

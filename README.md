@@ -104,18 +104,32 @@ the trust model, paths, upgrades, and uninstall behavior.
 
 ## Start using it
 
-After restarting the detected host, speak naturally:
+Engramark has no separate interface to open. After installation, fully quit
+and reopen Codex or OpenCode, then keep talking to the assistant as usual. You
+do not need special commands or direct MCP tool calls.
 
-- “Remember that this project targets API 24.”
-- “From now on, use pnpm in this repository.”
-- “What do you remember about the release checklist?”
-- “Save this as a candidate; I want to review it later.”
-- “Archive memory 18.”
+Complete this first workflow:
 
-Saving and curation happen through the installed MCP tools. Search returns a
-small human-readable result set; the assistant retrieves full details by
-memory ID only when they are relevant. Changes made through MCP or the CLI are
-immediately visible to new searches without restarting the host.
+1. Inside a project, say: “Remember that this project uses pnpm by default.
+   Save this as a project memory.” The assistant should confirm the save and
+   report the memory ID.
+2. Start a new task and ask: “Search Engramark: which package manager does
+   this project use?” The assistant should retrieve the memory and answer
+   `pnpm`.
+3. When the test is complete, say: “Delete that test memory.” An active memory
+   is deleted only after another explicit confirmation. Archive it instead if
+   it may be useful later.
+
+For daily maintenance, you can also say “Update memory 18 to…”, “Audit my
+memories for candidates, stale items, or conflicts”, or “Search for the
+release checklist.” Engramark writes only when you clearly request long-term
+retention; ordinary chat, temporary progress, and tool output are not saved.
+
+Codex can receive a few automatic hints on relevant requests. OpenCode's
+automatic request radar is disabled by default, but explicit search remains
+available. See the [complete user guide](docs/user-guide.md) for choosing
+project or global scope, deciding what to save, reviewing candidates, and
+troubleshooting.
 
 ## Measured baseline
 

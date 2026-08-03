@@ -9,6 +9,19 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+LANGUAGE_PAIRS = (
+    ("README.md", "README.zh-CN.md"),
+    ("docs/user-guide.md", "docs/使用指南.md"),
+    ("docs/installation.md", "docs/安装指南.md"),
+    ("docs/architecture.md", "docs/架构设计.md"),
+    ("docs/release-guide.md", "docs/发布指南.md"),
+    ("docs/testing.md", "docs/测试与验收.md"),
+    ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.zh-CN.md"),
+)
+
+
+def has_local_link(text: str, target: str) -> bool:
+    return f"]({target})" in text or f'href="{target}"' in text
 
 
 def publishable_markdown() -> list[Path]:
@@ -33,6 +46,20 @@ def main() -> int:
     markdown = publishable_markdown()
     if not (ROOT / "README.md").is_file():
         failures.append("仓库根目录必须保留 README.md 作为默认项目入口")
+    for english_relative, chinese_relative in LANGUAGE_PAIRS:
+        english = ROOT / english_relative
+        chinese = ROOT / chinese_relative
+        if not english.is_file() or not chinese.is_file():
+            failures.append(
+                f"中英文文档必须成对存在：{english_relative} ↔ {chinese_relative}"
+            )
+            continue
+        english_text = english.read_text(encoding="utf-8")
+        chinese_text = chinese.read_text(encoding="utf-8")
+        if not has_local_link(english_text, chinese.name):
+            failures.append(f"{english_relative} 缺少简体中文切换链接")
+        if not has_local_link(chinese_text, english.name):
+            failures.append(f"{chinese_relative} 缺少 English 切换链接")
     for path in markdown:
         text = path.read_text(encoding="utf-8")
         headings: list[str] = []

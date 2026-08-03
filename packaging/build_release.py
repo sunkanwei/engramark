@@ -33,6 +33,7 @@ TARGETS = {
 }
 PUBLIC_FILES = (
     "README.md",
+    "README.zh-CN.md",
     "THIRD_PARTY_NOTICES.md",
     "THIRD_PARTY_NOTICES.zh-CN.md",
     "VERSION",
@@ -40,7 +41,7 @@ PUBLIC_FILES = (
     "install.sh",
     "install.ps1",
 )
-PUBLIC_DIRECTORIES = ("adapters", "docs", "examples")
+PUBLIC_DIRECTORIES = ("adapters", "assets", "docs", "examples")
 PACKAGE_SCRIPTS = {
     "bin/install.sh": 0o755,
     "bin/uninstall": 0o755,

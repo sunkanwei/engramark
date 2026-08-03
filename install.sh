@@ -21,7 +21,9 @@ fail() {
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 	--package | --checksum | --version | --repo | --home)
-		[ "$#" -ge 2 ] && [ -n "$2" ] || fail "参数 $1 缺少值。"
+		if [ "$#" -lt 2 ] || [ -z "$2" ]; then
+			fail "参数 $1 缺少值。"
+		fi
 		case "$1" in
 		--package) PACKAGE="$2" ;;
 		--checksum) EXPECTED_SHA="$2" ;;
@@ -137,10 +139,14 @@ TAB="$(printf '\t')"
 while IFS="$TAB" read -r KIND SIZE DIGEST RELATIVE; do
 	TARGET_PATH="$STAGE/$RELATIVE"
 	if [ "$KIND" = d ]; then
-		[ -d "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ] || fail "清单目录非法：$RELATIVE"
+		if [ ! -d "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
+			fail "清单目录非法：$RELATIVE"
+		fi
 		continue
 	fi
-	[ -f "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ] || fail "清单文件非法：$RELATIVE"
+	if [ ! -f "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
+		fail "清单文件非法：$RELATIVE"
+	fi
 	ACTUAL_SIZE="$(wc -c <"$TARGET_PATH" | tr -d '[:space:]')"
 	[ "$ACTUAL_SIZE" = "$SIZE" ] || fail "文件大小校验失败：$RELATIVE"
 	ACTUAL_FILE_SHA="$(shasum -a 256 "$TARGET_PATH" | awk '{print $1}')"

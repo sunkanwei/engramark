@@ -55,9 +55,6 @@ jobs:
           - name: macOS 15 arm64 当前版
             os: macos-15
             target: macos-arm64
-          - name: macOS 14 x86_64 基线
-            os: macos-14-large
-            target: macos-x86_64
           - name: macOS 15 x86_64 当前版
             os: macos-15-intel
             target: macos-x86_64

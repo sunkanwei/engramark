@@ -202,7 +202,12 @@ def test_cache_and_ids() -> None:
         cli(home, "rebuild")
 
         conn = sqlite3.connect(home / "cache" / "memory.mcache")
-        conn.execute("DELETE FROM fts WHERE rowid=1")
+        segment = conn.execute(
+            "SELECT id FROM fts_data WHERE id > 10 ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        if segment is None:
+            raise RuntimeError("FTS 索引没有可供损坏测试使用的段")
+        conn.execute("DELETE FROM fts_data WHERE id=?", segment)
         conn.commit()
         conn.close()
         rc, report = cli(home, "diagnose")

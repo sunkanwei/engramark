@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+*.png -text
+*.gz -text
+*.zip -text

@@ -6,10 +6,10 @@ INSTALL_HOME="$HOME"
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 	--home)
-		[ "$#" -ge 2 ] && [ -n "$2" ] || {
+		if [ "$#" -lt 2 ] || [ -z "$2" ]; then
 			printf '%s\n' "错误：参数 --home 缺少值。" >&2
 			exit 2
-		}
+		fi
 		INSTALL_HOME="$2"
 		shift 2
 		;;

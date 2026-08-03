@@ -382,8 +382,19 @@ fn remove_property(chars: &[char], prop: &Property) -> Vec<char> {
     [&chars[..prop.start], &chars[prop.end..]].concat()
 }
 
+fn normalize_serialized_path(value: &str) -> String {
+    let mut normalized = String::with_capacity(value.len());
+    for current in value.chars().flat_map(char::to_lowercase) {
+        let current = if current == '\\' { '/' } else { current };
+        if current != '/' || !normalized.ends_with('/') {
+            normalized.push(current);
+        }
+    }
+    normalized
+}
+
 fn is_owned_opencode_mcp(value_text: &str) -> bool {
-    let normalized = value_text.to_lowercase().replace('\\', "/");
+    let normalized = normalize_serialized_path(value_text);
     normalized.contains("engramark")
         && (normalized.contains("mcp_server.py") || normalized.contains("bin/engramark"))
 }
@@ -540,7 +551,7 @@ fn validate_toml(text: &str) -> Result<()> {
 }
 
 fn is_legacy_engramark_mcp(section: &str) -> bool {
-    let normalized = section.to_lowercase().replace('\\', "/");
+    let normalized = normalize_serialized_path(section);
     normalized.contains("mcp_server.py")
         || normalized.contains("bin/engramark")
         || regex::Regex::new(r#"/engramark/(?:runtime/)?python(?:["']|$)"#)
@@ -1411,4 +1422,25 @@ pub fn run_cli(command: &crate::cli::Command) -> Result<()> {
     let _ = layout;
     let _ = VERSION;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{is_legacy_engramark_mcp, is_owned_opencode_mcp};
+
+    #[test]
+    fn recognizes_managed_windows_paths_after_serialization() {
+        assert!(is_legacy_engramark_mcp(
+            r#"command = "C:\\Users\\tester\\.local\\share\\engramark\\bin\\engramark.exe""#
+        ));
+        assert!(is_owned_opencode_mcp(
+            r#"{"type":"local","command":["C:\\Users\\tester\\.local\\share\\engramark\\bin\\engramark.exe","mcp"]}"#
+        ));
+        assert!(!is_legacy_engramark_mcp(
+            r#"command = "C:\\Users\\tester\\bin\\unrelated.exe""#
+        ));
+        assert!(!is_owned_opencode_mcp(
+            r#"{"type":"local","command":["C:\\Users\\tester\\bin\\unrelated.exe","mcp"]}"#
+        ));
+    }
 }

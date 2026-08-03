@@ -3,7 +3,7 @@
 import { spawn } from "node:child_process"
 import { createHash } from "node:crypto"
 import { stat, readFile } from "node:fs/promises"
-import { dirname, join, resolve } from "node:path"
+import { dirname, isAbsolute, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const MANAGED_APP_ROOT = null
@@ -431,7 +431,7 @@ export const createEngramarkPlugin = (options = {}) => async (context) => {
         const text = extractDirectText(output?.parts)
         if (!text) return
         const projectPath = context?.worktree || context?.directory
-        if (typeof projectPath !== "string" || !projectPath.startsWith("/")) return
+        if (typeof projectPath !== "string" || !isAbsolute(projectPath)) return
         const payload = { protocol_version: PROTOCOL_VERSION, host: "opencode",
           session_id: sessionID, project_path: projectPath, text, budget: config.budget }
         if (byteLength(JSON.stringify(payload)) > MAX_INPUT_BYTES) return

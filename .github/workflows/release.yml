@@ -24,6 +24,8 @@ jobs:
           toolchain: "1.97.1"
           components: rustfmt, clippy
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          enable-cache: false
       - name: 静态检查
         run: |
           python3 tests/test_repository_privacy.py

@@ -103,12 +103,17 @@ def main() -> int:
             print("FAIL 原子配置写入改变了既有父目录权限")
             return 1
 
-        app = home / ".local" / "share" / "engramark"
+        app = (home / ".local" / "share" / "engramark").resolve()
+        data_home = (home / "engramark").resolve()
         codex_text = (codex / "config.toml").read_text(encoding="utf-8")
         open_text = (opencode / "opencode.jsonc").read_text(encoding="utf-8")
         binary = str(app / "bin" / ("engramark.exe" if os.name == "nt" else "engramark"))
-        if binary not in codex_text or binary not in open_text:
-            print("FAIL 宿主接线没有指向固定程序目录")
+        encoded_binary = json.dumps(binary, ensure_ascii=False)
+        codex_has_binary = encoded_binary in codex_text
+        opencode_has_binary = encoded_binary in open_text
+        if not codex_has_binary or not opencode_has_binary:
+            print("FAIL 宿主接线没有指向固定程序目录："
+                  f"Codex={codex_has_binary}，OpenCode={opencode_has_binary}")
             return 1
         if (codex_text.count("[mcp_servers.engramark]") != 1
                 or "旧版托管块" in codex_text):
@@ -119,7 +124,8 @@ def main() -> int:
             return 1
         plugin_text = old_plugin.read_text(encoding="utf-8")
         if ("engramark-managed-opencode-plugin-v4" not in plugin_text
-                or str(app) not in plugin_text or str(home / "engramark") not in plugin_text
+                or json.dumps(str(app), ensure_ascii=False) not in plugin_text
+                or json.dumps(str(data_home), ensure_ascii=False) not in plugin_text
                 or "tool.execute" in plugin_text or "experimental.session.compacting" in plugin_text
                 or "raw-append" in plugin_text or "ENGRAMARK_SOURCE_ROOT" in plugin_text
                 or "process.env.ENGRAMARK_HOME ||" in plugin_text):
@@ -194,7 +200,8 @@ def main() -> int:
             print(enabled.stdout, enabled.stderr)
             return 1
         enabled_text = project_config.read_text(encoding="utf-8")
-        if (str(project) not in enabled_text or "mcp_servers.engramark" not in enabled_text
+        if (json.dumps(str(project.resolve()), ensure_ascii=False) not in enabled_text
+                or "mcp_servers.engramark" not in enabled_text
                 or 'model = "keep"' not in enabled_text):
             print("FAIL 项目配置没有安全加入 cwd 覆盖")
             return 1

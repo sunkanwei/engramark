@@ -108,7 +108,7 @@ try {
     if (-not (Test-Path $Manifest -PathType Leaf)) { throw "安装包缺少逐文件清单。" }
     $ExpectedPaths = [System.Collections.Generic.HashSet[string]]::new(
         [System.StringComparer]::OrdinalIgnoreCase)
-    foreach ($Line in Get-Content $Manifest) {
+    foreach ($Line in Get-Content $Manifest -Encoding UTF8) {
         $Fields = $Line.Split("`t")
         if ($Fields.Count -ne 4) { throw "逐文件清单格式非法。" }
         $Kind, $Size, $Digest, $Relative = $Fields

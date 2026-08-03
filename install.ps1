@@ -138,11 +138,16 @@ try {
         }
     }
     $ExpectedPaths.Add("MANIFEST.tsv") | Out-Null
+    $StagePrefix = [IO.Path]::GetFullPath($Stage).TrimEnd("\") + "\"
     $ActualPaths = Get-ChildItem $Stage -Force -Recurse | ForEach-Object {
         if ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) {
             throw "解包结果包含重解析点：$($_.FullName)"
         }
-        [IO.Path]::GetRelativePath($Stage, $_.FullName).Replace("\", "/")
+        $ItemPath = [IO.Path]::GetFullPath($_.FullName)
+        if (-not $ItemPath.StartsWith($StagePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+            throw "解包结果路径越界：$ItemPath"
+        }
+        $ItemPath.Substring($StagePrefix.Length).Replace("\", "/")
     }
     if ($ActualPaths.Count -ne $ExpectedPaths.Count -or
         @($ActualPaths | Where-Object { -not $ExpectedPaths.Contains($_) }).Count -ne 0) {

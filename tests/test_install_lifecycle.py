@@ -54,6 +54,7 @@ def main() -> int:
         print(f"SKIP dist 中没有 {target} 安装包")
         return 77
     package = packages[-1]
+    powershell = os.environ.get("ENGRAMARK_TEST_POWERSHELL", "pwsh")
     home = Path(tempfile.mkdtemp(prefix="engramark-install-test-"))
     try:
         (home / ".codex").mkdir()
@@ -61,7 +62,7 @@ def main() -> int:
         (home / "AppData" / "Local").mkdir(parents=True)
         def installer_for(bundle: Path) -> list[str]:
             return (
-                ["pwsh", "-NoProfile", "-File", str(ROOT / "install.ps1"),
+                [powershell, "-NoProfile", "-File", str(ROOT / "install.ps1"),
                  "-Package", str(bundle), "-Home", str(home)]
                 if os.name == "nt" else
                 ["sh", str(ROOT / "install.sh"), "--package", str(bundle),
@@ -164,7 +165,7 @@ def main() -> int:
               str(found))
 
         uninstall_command = (
-            ["pwsh", "-NoProfile", "-File", str(app / "bin" / "uninstall.ps1"),
+            [powershell, "-NoProfile", "-File", str(app / "bin" / "uninstall.ps1"),
              "-Home", str(home)]
             if os.name == "nt" else
             ["sh", str(app / "bin" / "uninstall.sh"), "--home", str(home)]

@@ -82,6 +82,12 @@ jobs:
           python tests/run.py
           python packaging/build_release.py --target ${{ matrix.target }}
           python tests/test_install_lifecycle.py
+      - name: 使用 Windows PowerShell 5.1 复验安装生命周期
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          ENGRAMARK_TEST_POWERSHELL: powershell.exe
+        run: python tests/test_install_lifecycle.py
       - name: 上传原生候选包
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -112,6 +118,12 @@ jobs:
           name: engramark-${{ matrix.target }}
           path: dist
       - name: 在当前系统复验同一候选包
+        run: python tests/test_install_lifecycle.py
+      - name: 使用 Windows PowerShell 5.1 复验同一候选包
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          ENGRAMARK_TEST_POWERSHELL: powershell.exe
         run: python tests/test_install_lifecycle.py
 
   draft:

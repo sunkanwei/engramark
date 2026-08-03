@@ -90,3 +90,9 @@ jobs:
         run: |
           python packaging/build_release.py --target ${{ matrix.target }}
           python tests/test_install_lifecycle.py
+      - name: 使用 Windows PowerShell 5.1 复验安装生命周期
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          ENGRAMARK_TEST_POWERSHELL: powershell.exe
+        run: python tests/test_install_lifecycle.py

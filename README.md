@@ -78,7 +78,7 @@ Engramark 只在用户明确表达长期保存意图时写入记忆。它不依�
 curl -fsSL https://raw.githubusercontent.com/sunkanwei/engramark/main/install.sh -o /tmp/engramark-install.sh && sh /tmp/engramark-install.sh
 ```
 
-Windows PowerShell：
+Windows x86_64（系统自带的 Windows PowerShell 5.1 或 PowerShell 7）：
 
 ```powershell
 $script = Join-Path $env:TEMP "engramark-install.ps1"
@@ -87,6 +87,8 @@ Invoke-WebRequest https://raw.githubusercontent.com/sunkanwei/engramark/main/ins
 ```
 
 安装包是单一原生二进制（内嵌 SQLite），用户不需要预装 Python、Homebrew 或数据库。安装器把程序放到固定目录，迁移旧卡片、重建缓存并接入检测到的 Codex 与 OpenCode。重新安装只替换程序，独立的记忆目录不会被覆盖；升级后请重启宿主，避免旧会话继续引用被替换的旧程序路径。
+
+Windows 发布包未做商业代码签名。安装器会先用发布页的 SHA-256 校验压缩包，再按包内清单校验每个文件；GitHub Release 同时提供构建来源证明。Windows 仍可能显示“未知发布者”或 SmartScreen 提示，这是未签名程序的系统提示，不代表校验失败。只应从本仓库的 Release 和上述官方安装脚本安装。
 
 卸载命令为 `~/.local/share/engramark/bin/uninstall`。它只移除程序与宿主接线，记忆始终保留；如需删除记忆，由用户手工处理 `~/engramark/`。
 
@@ -200,6 +202,6 @@ python3 tests/run.py
 
 - 本机已验证：Apple Silicon 原生二进制、卡片与缓存一致性、故障恢复、安全安装生命周期和两个宿主接线。
 - 发布工作流要求：Intel Mac、Linux x86_64 与 Windows x86_64 必须在各自原生 runner 全绿；任何未运行或失败的矩阵项都不构成平台支持。
-- 自动标签流程只生成带来源证明的未公开草稿；公开第三方分发仍以 macOS 签名/公证和 Windows 代码签名为人工闸门。
+- 自动标签流程先生成带校验和与来源证明的未公开草稿；全部原生验证通过后可人工发布。当前公开包不做 macOS 签名、公证或 Windows 代码签名，系统可能显示来源或未知发布者警告。
 - 路线图中：语义检索。
 - 项目采用 MIT 许可证；发布包同时携带依赖 SBOM 与上游许可证文件。

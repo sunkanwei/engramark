@@ -13,6 +13,9 @@ RUST = ROOT / "rust"
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     python = sys.executable
     cargo = os.environ.get("CARGO", "cargo")
     build = subprocess.run([cargo, "build"], cwd=RUST)
@@ -37,6 +40,8 @@ def main() -> int:
     env = dict(
         os.environ,
         PYTHONDONTWRITEBYTECODE="1",
+        PYTHONIOENCODING="utf-8",
+        PYTHONUTF8="1",
         ENGRAMARK_TEST_BINARY=str(binary.resolve()),
     )
     failed = 0

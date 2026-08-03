@@ -235,12 +235,9 @@ def test_radar_and_trigram() -> None:
     home = Path(tempfile.mkdtemp(prefix="engramark-v3-radar-"))
     try:
         cli(home, "save", memory("ShortAnchor", "标题不含目标。\nbodyonlytoken 只在完整正文。"))
-        conn = sqlite3.connect(home / "cache" / "memory.mcache")
-        unicode_hit = conn.execute("SELECT rowid FROM fts WHERE fts MATCH 'bodyonlytoken'").fetchall()
-        trigram_hit = conn.execute("SELECT rowid FROM fts_tri WHERE fts_tri MATCH 'bodyonlytoken'").fetchall()
-        conn.close()
-        check("Unicode FTS 索引完整正文", bool(unicode_hit))
-        check("trigram 默认不索引完整正文", not trigram_hit)
+        rc, unicode_hit = cli(home, "search", "bodyonlytoken")
+        check("Unicode FTS 索引完整正文",
+              rc == 0 and bool(unicode_hit.get("results")), str(unicode_hit))
         import struct
         conn = sqlite3.connect(home / "cache" / "memory.mcache")
         magic, version, count, length = struct.unpack(

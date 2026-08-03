@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""验证待发布 Markdown 的标题与相对链接。"""
+"""验证待发布 Markdown 的结构、链接、双语配对与关键事实同步。"""
 from __future__ import annotations
 
 import re
@@ -17,6 +17,16 @@ LANGUAGE_PAIRS = (
     ("docs/release-guide.md", "docs/发布指南.md"),
     ("docs/testing.md", "docs/测试与验收.md"),
     ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.zh-CN.md"),
+)
+USER_FACING = (
+    "README.md",
+    "README.zh-CN.md",
+    "docs/user-guide.md",
+    "docs/使用指南.md",
+)
+WINDOWS_INSTALL = (
+    '& "$env:SystemRoot\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" '
+    "-NoProfile -ExecutionPolicy Bypass -File $script"
 )
 WINDOWS_INSTALL_DOCS = (
     "README.md",
@@ -68,8 +78,8 @@ def main() -> int:
             failures.append(f"{chinese_relative} 缺少 English 切换链接")
     for relative in WINDOWS_INSTALL_DOCS:
         text = (ROOT / relative).read_text(encoding="utf-8")
-        if "-ExecutionPolicy Bypass -File $script" not in text:
-            failures.append(f"{relative} 的 Windows 安装命令必须兼容客户端默认执行策略")
+        if WINDOWS_INSTALL not in text:
+            failures.append(f"{relative} 的 Windows 安装命令与统一入口不一致")
         if "Set-ExecutionPolicy" in text:
             failures.append(f"{relative} 不得要求用户永久修改 PowerShell 执行策略")
     for path in markdown:
@@ -93,11 +103,64 @@ def main() -> int:
                     f"{path.relative_to(ROOT)} 包含失效链接：{raw_target}"
                 )
 
+    for relative in USER_FACING:
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        for phrase in ("查询 Engramark", "查一下 Engramark", "Search Engramark"):
+            if phrase in text:
+                failures.append(
+                    f"{relative} 的日常示例不应要求用户说出产品名：{phrase}"
+                )
+
+    for relative in (
+        "docs/testing.md",
+        "docs/测试与验收.md",
+        "docs/release-guide.md",
+        "docs/发布指南.md",
+    ):
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        if "packaging/build_release.py --target" not in text:
+            failures.append(f"{relative} 的打包命令必须显式指定 --target")
+
+    adapter = (ROOT / "adapters/opencode/engramark.js").read_text(encoding="utf-8")
+    version_match = re.search(r'VERIFIED_OPENCODE_VERSION = "([^"]+)"', adapter)
+    if not version_match:
+        failures.append("无法从 OpenCode 适配器读取已验收版本")
+    else:
+        version = version_match.group(1)
+        for relative in (
+            "docs/installation.md",
+            "docs/安装指南.md",
+            "docs/architecture.md",
+            "docs/架构设计.md",
+        ):
+            if version not in (ROOT / relative).read_text(encoding="utf-8"):
+                failures.append(f"{relative} 未同步 OpenCode 已验收版本 {version}")
+
+    cache_source = (ROOT / "rust/src/lib.rs").read_text(encoding="utf-8")
+    cache_match = re.search(r"CACHE_SCHEMA_VERSION: i64 = (\d+)", cache_source)
+    if not cache_match:
+        failures.append("无法从核心读取本机索引版本")
+    else:
+        cache_label = f"v{cache_match.group(1)}"
+        for relative in ("docs/architecture.md", "docs/架构设计.md"):
+            if cache_label not in (ROOT / relative).read_text(encoding="utf-8"):
+                failures.append(f"{relative} 未同步本机索引版本 {cache_label}")
+
+    unicode_source = (ROOT / "rust/src/casefold_table.rs").read_text(encoding="utf-8")
+    unicode_match = re.search(r"Unicode (\d+\.\d+\.\d+)", unicode_source)
+    if not unicode_match:
+        failures.append("无法从规范化表读取 Unicode 数据版本")
+    else:
+        unicode_version = unicode_match.group(1)
+        for relative in ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.zh-CN.md"):
+            if unicode_version not in (ROOT / relative).read_text(encoding="utf-8"):
+                failures.append(f"{relative} 未同步 Unicode 数据版本 {unicode_version}")
+
     if failures:
         for failure in failures:
             print(f"FAIL {failure}")
         return 1
-    print(f"PASS 已检查 {len(markdown)} 个 Markdown 文件的标题与相对链接")
+    print(f"PASS 已检查 {len(markdown)} 个 Markdown 文件的结构、链接与关键一致性")
     return 0
 
 

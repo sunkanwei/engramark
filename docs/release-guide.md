@@ -2,49 +2,82 @@
 
 **[English](release-guide.md) | [简体中文](发布指南.md)**
 
-This guide is for maintainers building, validating, and publishing Engramark
-release candidates. Users should follow [Install and Upgrade](installation.md).
+This guide is for maintainers. It explains when Engramark needs a new release and how to build, validate, and publish it. Users should follow [Install and Upgrade](installation.md); complete test commands live in [Testing and Validation](testing.md).
 
-## Release model
+## Distinguish four actions first
 
-Engramark ships one native executable per platform:
+| Action | Meaning | Creates a public version |
+|---|---|---:|
+| Git commit | Records a group of changes locally | No |
+| Branch push | Synchronizes commits to the remote repository | No |
+| Version-tag push | Starts the four-platform release workflow | Draft only |
+| Publish GitHub Release | Makes release notes and downloads public | Yes |
 
-- macOS on Apple Silicon;
-- macOS on Intel;
-- Linux x86_64;
-- Windows x86_64.
+An ordinary commit is not a release. Users see a new downloadable version only after the version number, tag, automated validation, and public Release all complete.
 
-Each artifact must be built and executed on its own native runner.
-Cross-compilation cannot replace the native capability probe, full test suite,
-and installation lifecycle.
+## Decide whether a release is needed
 
-Program files and private data remain separate. A release archive contains
-only replaceable program files, host adapters, default configuration,
-documentation, licenses, and supply-chain metadata. It never contains real
-memories, caches, or local state.
+| Change | Usual treatment |
+|---|---|
+| Comments, internal refactoring, developer docs, or wording with no user impact | No release |
+| A user-facing defect, security issue, compatibility issue, or data-reliability fix | Patch release |
+| A published installation instruction error that can cause installation or use to fail | Patch release |
+| A backward-compatible user feature or platform | Minor release |
+| An incompatible public behavior change | Major release |
 
-## Prepare the version
+Versions follow semantic-versioning principles. Do not create an empty release merely to produce a new version number.
 
-Before release:
+Before release work starts, explain the proposed version, reason, and user-visible changes to the project owner. Do not push a version tag or publish a Release without explicit authorization.
 
-1. Ensure the root `VERSION` and `rust/Cargo.toml` versions match.
-2. Use the tag `v<version>`.
-3. Confirm that the worktree contains only expected changes and no real
-   memories, credentials, or local artifacts.
-4. Synchronize user-visible behavior, supported boundaries, and documentation.
-5. Explicitly review golden-contract changes and update the implementation,
-   manifest, and documentation together.
+## Release model and targets
 
-## Build locally
+Engramark builds one native executable for each platform:
 
-Build only a target that the current machine can execute and validate natively:
+| Target argument | Platform | Archive |
+|---|---|---|
+| `macos-arm64` | macOS Apple Silicon | `.tar.gz` |
+| `macos-x86_64` | macOS Intel | `.tar.gz` |
+| `linux-x86_64` | Linux x86_64 | `.tar.gz` |
+| `windows-x86_64` | Windows x86_64 | `.zip` |
 
-```sh
-python3 packaging/build_release.py --target macos-arm64
+Each platform must build and execute on its own native runner. Cross-compilation cannot replace the capability self-check, full test suite, and installation lifecycle.
+
+A release archive contains replaceable program files, Codex/OpenCode adapters, default configuration, documentation, licenses, and supply-chain metadata. It never contains real memories, a local index, or durable user state.
+
+## Release flow
+
+```mermaid
+flowchart LR
+    A["Prepare version"] --> B["Complete local validation"]
+    B --> C["Commit and push main"]
+    C --> D["Create and push v* tag"]
+    D --> E["Four-platform build and revalidation"]
+    E --> F["Create unpublished draft"]
+    F --> G["Inspect artifacts and provenance"]
+    G --> H["Publish Release"]
+    H --> I["Post-release verification"]
 ```
 
-The builder performs a locked release build and capability probe, then
-produces:
+## 1. Prepare the version
+
+Before release, confirm:
+
+- [ ] root `VERSION` and `rust/Cargo.toml` versions match;
+- [ ] the target tag is `v<version>`;
+- [ ] the worktree contains only expected changes and no real memories, credentials, or local artifacts;
+- [ ] user-visible behavior, supported boundaries, and both documentation languages are synchronized;
+- [ ] golden-contract changes received explicit review and coordinated implementation, manifest, and documentation updates;
+- [ ] the proposed version and release reason are authorized.
+
+## 2. Build and validate locally
+
+Build only a target that the current machine can run natively:
+
+```sh
+python3 packaging/build_release.py --target <current-native-target>
+```
+
+The builder performs a locked release build and capability self-check, then produces:
 
 ```text
 dist/engramark-<version>-<target>.tar.gz
@@ -60,92 +93,77 @@ Each candidate contains:
 - upstream licenses for Rust dependencies and Unicode data;
 - `MANIFEST.tsv` with the type, size, and SHA-256 of every file.
 
-Linux artifacts are built on Ubuntu 22.04 and reject symbol requirements above
-glibc 2.35. macOS artifacts declare a fixed 13.0 deployment target. That
-declaration is not evidence of execution on a particular macOS version.
-
-## Validate before release
-
-Daily full suite:
+Before release, run at least:
 
 ```sh
 python3 tests/run.py
 python3 tests/test_repository_privacy.py
-```
-
-Non-CI 10,006-card scale check:
-
-```sh
+python3 tests/test_documentation.py
 ENGRAMARK_SCALE_CARDS=10006 python3 tests/test_retrieval_scale.py
-```
-
-Static and supply-chain checks:
-
-```sh
-ruff check tests packaging
-shellcheck install.sh bin/install.sh bin/uninstall bin/uninstall.sh
-cargo deny --manifest-path rust/Cargo.toml check advisories licenses sources
-git diff --check
-```
-
-Native installation lifecycle:
-
-```sh
 python3 packaging/build_release.py --target <current-native-target>
 python3 tests/test_install_lifecycle.py
 ```
 
-The lifecycle uses an isolated user directory to verify malicious-archive
-rejection, installation, host wiring, MCP, hooks and radar, search, writes,
-backup, upgrade reinstall, uninstall, and preservation of memory data after
-uninstall.
+See the [complete local gate](testing.md#complete-local-gate) for formatting, static, and supply-chain checks.
 
-## GitHub release candidate
+The lifecycle uses an isolated user directory to verify malicious-archive rejection, installation, host integration, retrieval, writes, backup, upgrade reinstall, uninstall, and preservation of memory data after uninstall.
 
-Pushing a `v*` tag matching `VERSION` starts GitHub Actions, which:
+Linux artifacts are built on Ubuntu 22.04 and reject symbol requirements above glibc 2.35. macOS artifacts declare a 13.0 deployment target; that declaration is not evidence of native execution on a particular macOS version.
 
-1. Runs static, documentation, privacy, and supply-chain gates.
-2. Runs the full suite, capability probe, package build, and installation
-   lifecycle on four native runners.
-3. Revalidates the same candidate archives on newer systems.
-4. Produces a unified `checksums.txt`.
-5. Generates GitHub build provenance for the artifacts.
-6. Creates an unpublished GitHub Release draft.
+## 3. Push the version tag
 
-Automation does not publish the version. A maintainer must confirm all four
-builds, compatibility revalidation, checksums, provenance, and attachments
-before manually publishing the draft.
+Only after the target commit, required tests, and main-branch CI pass—and release authorization exists—create the tag matching `VERSION`:
 
-## Integrity, provenance, and code signing
+```sh
+version=$(cat VERSION)
+git tag -a "v$version" -m "Engramark v$version"
+git push origin "v$version"
+```
 
-Current public distribution uses three layers:
+Do not rewrite a public tag or replace proven release assets in place. When a public version has a problem, keep it and create a new patch version.
+
+## 4. Wait for the GitHub release candidate
+
+The tag starts GitHub Actions, which:
+
+1. runs static, documentation, privacy, and supply-chain gates;
+2. runs the full suite, capability self-check, package build, and installation lifecycle on four native runners;
+3. revalidates the same candidate archives on newer systems;
+4. produces a unified `checksums.txt`;
+5. generates GitHub build provenance for the artifacts;
+6. creates an unpublished GitHub Release draft.
+
+Automation does not publish the version. A transient runner or network failure may be rerun. If a fix changes candidate content, do not move the original tag; increment the version and create a new tag. Never skip a failed job or describe the draft as published.
+
+## 5. Inspect and publish the draft
+
+Before publication, confirm:
+
+- [ ] all four platform builds passed;
+- [ ] all four compatibility revalidations passed;
+- [ ] the Release contains four native artifacts and one unified `checksums.txt`;
+- [ ] GitHub build provenance is visible;
+- [ ] filenames, tag, `VERSION`, and Cargo package version match;
+- [ ] release notes accurately summarize user-visible changes;
+- [ ] unsigned-package and system-warning boundaries remain explicit.
+
+Current distribution uses three integrity layers:
 
 - outer `checksums.txt` for downloaded artifacts;
 - inner `MANIFEST.tsv` for every extracted file;
-- GitHub build provenance showing that the artifacts were produced by this
-  repository's workflow.
+- GitHub build provenance showing that artifacts came from this repository's workflow.
 
-These measures are not operating-system code signing. Current public packages
-do not have Apple Developer ID signing, notarization, or a Windows code-signing
-certificate, so users may still see source or unknown-publisher warnings.
-Release notes and installation documentation must state this boundary
-accurately.
+These measures are not operating-system code signing. Current public packages do not have Apple Developer ID signing, notarization, or a Windows code-signing certificate, so users may still see source or unknown-publisher warnings. Until platform signing is actually implemented, checksums and provenance must not be described as code signing.
 
-Platform code signing can be added later for devices governed by enterprise
-policy. Until then, checksums and provenance must not be described as code
-signing.
+## 6. Verify after release
 
-## Post-release checks
+After publication, confirm:
 
-After publishing a Release, confirm that:
+- [ ] the latest-version page provides four correct platform archives and the unified checksum file;
+- [ ] installers parse artifact names and select the current platform;
+- [ ] GitHub build provenance is publicly accessible;
+- [ ] README and installation-guide commands remain valid;
+- [ ] the new version is marked Latest;
+- [ ] no release fix remains only on `main`.
 
-- default download links return the correct four artifacts and unified
-  checksum file;
-- installers parse the artifact names and select the current platform;
-- GitHub build provenance is visible on the Release;
-- `README.md` and the installation guide contain valid current commands;
-- the tag, `VERSION`, Cargo package version, and artifact names match;
-- no release fix remains only on `main`.
-
-Engramark itself uses the MIT License. Every candidate must also carry the
-dependency SBOM and collected upstream licenses.
+Engramark itself uses the MIT License. Every candidate must also carry the dependency SBOM and collected upstream licenses.

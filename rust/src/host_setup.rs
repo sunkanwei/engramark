@@ -5,6 +5,9 @@
 
 use std::path::{Path, PathBuf};
 
+#[cfg(any(windows, test))]
+use std::borrow::Cow;
+
 use crate::json::Json;
 use crate::paths::Layout;
 use crate::{Error, Result, VERSION};
@@ -36,6 +39,34 @@ fn binary_name() -> &'static str {
 
 fn binary_path(app_root: &Path) -> PathBuf {
     app_root.join("bin").join(binary_name())
+}
+
+#[cfg(any(windows, test))]
+fn strip_windows_verbatim(value: &str) -> Cow<'_, str> {
+    if let Some(rest) = value.strip_prefix(r"\\?\UNC\") {
+        return Cow::Owned(format!(r"\\{rest}"));
+    }
+    if let Some(rest) = value.strip_prefix(r"\\?\") {
+        let bytes = rest.as_bytes();
+        if bytes.get(1) == Some(&b':') && bytes.get(2) == Some(&b'\\') {
+            return Cow::Borrowed(rest);
+        }
+    }
+    Cow::Borrowed(value)
+}
+
+fn config_path(path: &Path) -> String {
+    let value = path
+        .to_str()
+        .expect("host-setup paths are prevalidated Unicode");
+    #[cfg(windows)]
+    {
+        return strip_windows_verbatim(value).into_owned();
+    }
+    #[cfg(not(windows))]
+    {
+        value.to_string()
+    }
 }
 
 pub struct HostSetupArgs {
@@ -507,12 +538,7 @@ pub fn replace_block(text: &str, begin: &str, end: &str, body: Option<&str>) -> 
 }
 
 pub fn agent_block(data_home: &Path) -> String {
-    AGENT_BLOCK_TEMPLATE.replace(
-        "{DATA_HOME}",
-        data_home
-            .to_str()
-            .expect("host-setup paths are prevalidated Unicode"),
-    )
+    AGENT_BLOCK_TEMPLATE.replace("{DATA_HOME}", &config_path(data_home))
 }
 
 // --- Codex TOML surgery ---
@@ -652,8 +678,8 @@ pub fn patch_codex_config(
         let binary = binary_path(app_root);
         let mcp_body = format!(
             "[mcp_servers.engramark]\ncommand = {}\nargs = [\"mcp\"]\n\n[mcp_servers.engramark.env]\nENGRAMARK_HOME = {}",
-            Json::Str(binary.to_str().expect("host-setup paths are prevalidated Unicode").into()).dumps(),
-            Json::Str(data_home.to_str().expect("host-setup paths are prevalidated Unicode").into()).dumps(),
+            Json::Str(config_path(&binary)).dumps(),
+            Json::Str(config_path(data_home)).dumps(),
         );
         let text = lines.join("\n").trim_end().to_string() + "\n";
         let result = replace_block(&text, CODEX_MCP_BEGIN, CODEX_MCP_END, Some(&mcp_body))?;
@@ -740,13 +766,7 @@ pub fn patch_codex_project_config(
     }
     let body = format!(
         "[mcp_servers.engramark]\ncwd = {}",
-        Json::Str(
-            project_root
-                .to_str()
-                .expect("host-setup paths are prevalidated Unicode")
-                .into()
-        )
-        .dumps()
+        Json::Str(config_path(project_root)).dumps()
     );
     let result = replace_block(&text, CODEX_PROJECT_BEGIN, CODEX_PROJECT_END, Some(&body))?;
     validate_toml(&result)?;
@@ -759,9 +779,7 @@ pub fn render_hooks(app_root: &Path, data_home: &Path) -> Result<Json> {
     let mut payload = Json::parse(HOOKS_TEMPLATE)
         .map_err(|err| setup_error(format!("内置 hooks.json 模板非法：{err}")))?;
     let legacy = "$HOME/engramark";
-    let program = app_root
-        .to_str()
-        .expect("host-setup paths are prevalidated Unicode");
+    let program = config_path(app_root);
     let Some(hooks) = payload.get("hooks").and_then(Json::as_object) else {
         return Ok(payload);
     };
@@ -780,23 +798,17 @@ pub fn render_hooks(app_root: &Path, data_home: &Path) -> Result<Json> {
             for handler in handlers {
                 let mut handler = handler.clone();
                 if let Some(command) = handler.get("command").and_then(Json::as_str) {
-                    let command = command.replace(legacy, program);
+                    let command = command.replace(legacy, &program);
                     let command = if cfg!(windows) {
                         format!(
                             "\"{}\" {}",
-                            binary_path(app_root)
-                                .to_str()
-                                .expect("host-setup paths are prevalidated Unicode"),
+                            config_path(&binary_path(app_root)),
                             command_args_after_binary(&command)
                         )
                     } else {
                         format!(
                             "/usr/bin/env ENGRAMARK_HOME={} {}",
-                            shell_quote(
-                                data_home
-                                    .to_str()
-                                    .expect("host-setup paths are prevalidated Unicode")
-                            ),
+                            shell_quote(&config_path(data_home)),
                             command
                         )
                     };
@@ -804,12 +816,8 @@ pub fn render_hooks(app_root: &Path, data_home: &Path) -> Result<Json> {
                     if cfg!(windows) {
                         let win_command = format!(
                             "set \"ENGRAMARK_HOME={}\" && \"{}\" {}",
-                            data_home
-                                .to_str()
-                                .expect("host-setup paths are prevalidated Unicode"),
-                            binary_path(app_root)
-                                .to_str()
-                                .expect("host-setup paths are prevalidated Unicode"),
+                            config_path(data_home),
+                            config_path(&binary_path(app_root)),
                             command_args_after_binary(
                                 handler.get("command").and_then(Json::as_str).unwrap_or("")
                             ),
@@ -1001,26 +1009,14 @@ fn render_opencode_plugin(app_root: &Path, data_home: &Path) -> Result<Vec<u8>> 
             app_marker,
             &format!(
                 "const MANAGED_APP_ROOT = {}",
-                Json::Str(
-                    app_root
-                        .to_str()
-                        .expect("host-setup paths are prevalidated Unicode")
-                        .into()
-                )
-                .dumps()
+                Json::Str(config_path(app_root)).dumps()
             ),
         )
         .replace(
             data_marker,
             &format!(
                 "const MANAGED_DATA_HOME = {}",
-                Json::Str(
-                    data_home
-                        .to_str()
-                        .expect("host-setup paths are prevalidated Unicode")
-                        .into()
-                )
-                .dumps()
+                Json::Str(config_path(data_home)).dumps()
             ),
         );
     Ok(rendered.into_bytes())
@@ -1180,12 +1176,12 @@ fn opencode_mcp_value(app_root: &Path, data_home: &Path) -> Json {
     crate::jobject! {
         "type" => "local",
         "command" => Json::Array(vec![
-            Json::Str(binary_path(app_root).to_str().expect("host-setup paths are prevalidated Unicode").into()),
+            Json::Str(config_path(&binary_path(app_root))),
             Json::Str("mcp".into()),
         ]),
         "enabled" => true,
         "environment" => crate::jobject! {
-            "ENGRAMARK_HOME" => data_home.to_str().expect("host-setup paths are prevalidated Unicode"),
+            "ENGRAMARK_HOME" => config_path(data_home),
         },
     }
 }
@@ -1426,7 +1422,23 @@ pub fn run_cli(command: &crate::cli::Command) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_legacy_engramark_mcp, is_owned_opencode_mcp};
+    use super::{is_legacy_engramark_mcp, is_owned_opencode_mcp, strip_windows_verbatim};
+
+    #[test]
+    fn strips_only_windows_filesystem_verbatim_prefixes() {
+        assert_eq!(
+            strip_windows_verbatim(r"\\?\C:\Users\tester\engramark"),
+            r"C:\Users\tester\engramark"
+        );
+        assert_eq!(
+            strip_windows_verbatim(r"\\?\UNC\server\share\engramark"),
+            r"\\server\share\engramark"
+        );
+        assert_eq!(
+            strip_windows_verbatim(r"\\?\GLOBALROOT\Device\HarddiskVolume1"),
+            r"\\?\GLOBALROOT\Device\HarddiskVolume1"
+        );
+    }
 
     #[test]
     fn recognizes_managed_windows_paths_after_serialization() {

@@ -9,7 +9,13 @@
 </p>
 
 <p align="center">
-  <strong>Local long-term memory for coding assistants — thousands of memories, only a few lines of context.</strong>
+  <strong>Let coding assistants remember what matters across tasks—and retrieve it only when needed.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/sunkanwei/engramark/releases/latest"><img src="https://img.shields.io/github/v/release/sunkanwei/engramark" alt="Latest release" /></a>
+  <a href="https://github.com/sunkanwei/engramark/actions/workflows/ci.yml"><img src="https://github.com/sunkanwei/engramark/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
 <p align="center">
@@ -24,52 +30,31 @@
   <a href="docs/testing.md">Testing</a>
 </p>
 
-Engramark gives Codex, OpenCode, and other coding assistants one shared,
-local memory. It stores durable knowledge as readable text, builds a
-replaceable local search index, and exposes the same memory through MCP and
-host integrations. There is no daemon, no LLM dependency for retrieval, no
-cloud account, and no telemetry.
+Engramark gives Codex and OpenCode one shared, local long-term memory. You decide what is worth keeping. When a related question comes up later, the assistant can retrieve that knowledge without placing entire conversation histories into context.
+
+Memories remain readable text on your own computer. Engramark needs no cloud account, runs no daemon, does not depend on an LLM for retrieval, and includes no telemetry.
 
 ![Engramark retrieves short hints only when they are relevant](assets/hero-context.en.svg)
 
-## Why Engramark
+## What it solves
 
-- **Context stays small.** A request receives at most three short memory hints
-  when the local radar finds a match. A miss costs zero context tokens, and
-  full details are fetched only when needed.
-- **Memory stays under your control.** The readable text cards are the source
-  of truth. SQLite is only a derived cache that can be rebuilt at any time.
-- **Nothing is recorded implicitly.** Engramark saves only when the user
-  clearly asks for long-term retention. Ordinary chat, temporary progress,
-  tool output, and command history are not collected.
-- **Retrieval can say “not enough evidence.”** Multiple deterministic search
-  lanes are fused and scored; weak matches are rejected instead of being
-  presented as remembered facts.
-- **Writes survive crashes.** Source changes and index updates use recoverable,
-  idempotent transactions with cross-process locking and durable replacement.
-- **Project memories stay isolated.** A project-scoped memory is visible only
-  in its own project. Unreliable project context never silently falls back to
-  global storage.
+- **Stop repeating project conventions.** Keep technology choices, directory aliases, architecture decisions, and reusable workflows across tasks.
+- **Keep context small.** Only a few relevant hints enter a request; full details are read when they are actually needed.
+- **Keep projects separate.** Project memories stay in their own project, while personal preferences can use global scope.
+- **Nothing is recorded implicitly.** Engramark writes only after an explicit long-term save request. Ordinary chat, temporary progress, and tool output are not collected.
+- **Keep control of the data.** Readable local files are the original memory source, and the search index can be rebuilt at any time.
 
 ## How it works
 
-1. **You decide what lasts.** Tell the assistant to remember a fact, decision,
-   preference, path, or reusable workflow. Engramark does not depend on a fixed
-   wake-word list; it interprets the intent of the request.
-2. **Relevant memories surface as a short index.** The local radar scans the
-   request and injects only compact hints that fit a strict byte budget.
-3. **Details are disclosed progressively.** The assistant searches first, then
-   retrieves the full text of only the selected memories through MCP.
+1. **You decide what lasts.** Tell the assistant to remember a fact, decision, preference, path, or reusable workflow.
+2. **Engramark stores and searches locally.** Codex and OpenCode can use the same collection without a separate memory cloud service.
+3. **The assistant retrieves only what it needs.** A related request can receive a few short hints, followed by full details only when necessary.
 
-Candidate memories exist for an explicit “save this as a candidate” workflow.
-They remain outside normal search and radar results until the user accepts
-them. Important memories can be locked against automatic trust reduction.
+There are no required wake words and no memory files to manage by hand. See the [complete user guide](docs/user-guide.md) for candidates, archiving, backup, and other maintenance tasks.
 
 ## Install
 
-Supported release targets are macOS on Apple Silicon and Intel, Linux x86_64,
-and Windows x86_64. Install only artifacts that completed the native CI,
-capability probe, and installation-lifecycle job for their platform.
+Current release targets are macOS on Apple Silicon and Intel, Linux x86_64, and Windows x86_64. The package contains one native executable with embedded SQLite. Python, Homebrew, a database server, and a package manager are not required.
 
 macOS and Linux:
 
@@ -86,137 +71,83 @@ Invoke-WebRequest https://raw.githubusercontent.com/sunkanwei/engramark/main/ins
 & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $script
 ```
 
-`-ExecutionPolicy Bypass` applies only to that installer process and does not
-change the user's saved execution policy. An organization-enforced Group Policy
-can still prohibit unsigned scripts; in that case, the device administrator
-must allow the installer.
+> [!NOTE]
+> You can paste the Windows command into PowerShell 5.1 or 7. It deliberately runs the installer with the built-in Windows PowerShell 5.1 for consistent behavior. `-ExecutionPolicy Bypass` affects only this installer process, does not persistently change policy, and cannot override organization-enforced Group Policy.
 
-The package contains one native executable with embedded SQLite. Users do not
-need Python, Homebrew, a database server, or a package manager. Reinstalling or
-upgrading replaces the program but preserves the separate memory directory.
+> [!WARNING]
+> Current public packages do not have Apple Developer ID or Windows code signing. Install only from this repository's Releases or the official scripts above. Do not bypass a system warning if you cannot verify the download source. The installer verifies release checksums and the package file manifest.
 
-Current public packages are not signed with Apple Developer ID or a Windows
-code-signing certificate. Windows may therefore show an “Unknown publisher”
-or SmartScreen warning. Download only from this repository's Releases or the
-official scripts above; the installer verifies the release checksum and the
-per-file package manifest. See [Install and upgrade](docs/installation.md) for
-the trust model, paths, upgrades, and uninstall behavior.
+See [Install and Upgrade](docs/installation.md) for platform details, upgrades, paths, and uninstall behavior.
 
-## Start using it
+## Complete your first workflow in three minutes
 
-Engramark has no separate interface to open. After installation, fully quit
-and reopen Codex or OpenCode, then keep talking to the assistant as usual. You
-do not need special commands or direct MCP tool calls.
+After installation, fully quit and reopen Codex or OpenCode, then start a task inside a project.
 
-Complete this first workflow:
+1. Say: “Remember that pnpm is this project's package manager. Save it as a project memory.” The assistant should confirm the save and report the memory ID.
+2. Start a new task and ask: “Do you remember which package manager this project uses?” The assistant should answer `pnpm`.
+3. Continue with: “Update the package-manager memory to say this project uses pnpm 10.” The existing memory should be updated instead of duplicated.
+4. If this was only a test, say: “Delete that test memory.” Deleting an active memory requires another explicit confirmation.
 
-1. Inside a project, say: “Remember that this project uses pnpm by default.
-   Save this as a project memory.” The assistant should confirm the save and
-   report the memory ID.
-2. Start a new task and ask: “Search Engramark: which package manager does
-   this project use?” The assistant should retrieve the memory and answer
-   `pnpm`.
-3. When the test is complete, say: “Delete that test memory.” An active memory
-   is deleted only after another explicit confirmation. Archive it instead if
-   it may be useful later.
+In daily work, ask naturally: “What checks do we run before a release?”, “What database migration process did we decide on?”, or “Review my long-term memories for anything stale, conflicting, or waiting for confirmation.” The assistant decides when to use memory; users do not need to name the product or a tool.
 
-For daily maintenance, you can also say “Update memory 18 to…”, “Audit my
-memories for candidates, stale items, or conflicts”, or “Search for the
-release checklist.” Engramark writes only when you clearly request long-term
-retention; ordinary chat, temporary progress, and tool output are not saved.
+## Codex and OpenCode
 
-Codex can receive a few automatic hints on relevant requests. OpenCode's
-automatic request radar is disabled by default, but explicit search remains
-available. See the [complete user guide](docs/user-guide.md) for choosing
-project or global scope, deciding what to save, reviewing candidates, and
-troubleshooting.
+| Use | Codex | OpenCode |
+|---|---|---|
+| Save and retrieve through natural language | Supported | Supported |
+| Automatic short hints on related requests | Available after installation | Disabled by default |
+| Retrieval while automatic hints are off | Still available through natural questions | Still available through natural questions |
 
-## Measured baseline
+OpenCode automatic hints are disabled by default because the hints may be stored with conversation messages. Enable them only after understanding that behavior; see [Automatic recall and explicit lookup](docs/user-guide.md#automatic-recall-and-explicit-lookup).
 
-These are project-owned regression results, not results from a public memory
-benchmark such as LOCOMO:
+## Privacy and reliability
 
-| Metric | Result |
+- Program files and private memory data are separate. Reinstallation does not overwrite memories, and uninstall does not delete them.
+- Private directories and files use operating-system permissions for the current user. Full memory content in the cache should still be protected with disk encryption such as FileVault or BitLocker.
+- “Local” describes storage and retrieval. A retrieved memory enters the current coding assistant's context and is then handled under that assistant's service boundary.
+- Retrieval reports insufficient evidence instead of presenting a weak association as a remembered fact.
+- A temporary memory failure does not block Codex or OpenCode from handling the original request; automatic hints are simply skipped.
+- Consistent backup does not copy a live database, and rollback first preserves the current state.
+
+<details>
+<summary><strong>View the project regression baseline</strong></summary>
+
+These figures come from the project's synthetic regression suite. They are not a public benchmark such as LOCOMO and are not a performance guarantee for every device. Actual latency varies with hardware, operating system, and memory content.
+
+| Metric | Current reference result |
 |---|---:|
 | Synthetic long-term collection | 2,000 cards |
 | Full index rebuild | about 0.5 s |
 | Hot query p95 | about 7 ms |
 | Golden recall@5 | 1.0 |
 | Unrelated-query rejection | 1.0 |
-| False radar injections | 0 |
+| False automatic hints | 0 |
 | Project isolation | passed |
-| Per-request radar output | at most 3 short hints |
 
-The reproducible procedure and the larger 10,006-card release check are
-documented in [Testing and validation](docs/testing.md).
+See [Testing and Validation](docs/testing.md) for the reproducible procedure and the larger 10,006-card pre-release check.
 
-## Privacy and reliability
-
-- Program files live separately from private memory data, so reinstalling does
-  not overwrite memories and uninstalling does not delete them.
-- On Unix, private directories use `0700` and private files use `0600`.
-  Windows uses a protected ACL for the current user, SYSTEM, and Administrators.
-- Explicit search reports cache failures, lock timeouts, and time-budget
-  failures instead of disguising them as an empty result.
-- Automatic hooks fail open: if memory is unavailable, the host request
-  continues without injected context.
-- Consistent backups copy the text source and durable ID state, not a live
-  SQLite file. Rollback first creates a safety snapshot and never lowers the ID
-  high-water mark.
-- Real cards, persistent state, caches, logs, and local runtime files are
-  excluded from Git and protected by repository privacy tests.
-
-## Configuration
-
-User configuration lives at `~/engramark/engramark.json`. Common controls:
-
-| Setting | Default | Purpose |
-|---|---:|---|
-| `radar.budget` | `3` | Maximum short hints injected for one request |
-| `radar.cooldown_ttl_seconds` | `86400` | Per-session, per-memory cooldown |
-| `opencode.request_radar_enabled` | `false` | Enable the verified OpenCode request radar |
-| `search.query_timeout_ms` | `500` | Search time budget |
-| `search.high_threshold` / `medium_threshold` | `0.64` / `0.34` | Confidence and rejection thresholds |
-| `search.preview_max_bytes` | `800` | Preview cap for the top high-confidence result |
-
-OpenCode request radar is intentionally disabled by default because its short
-index is stored in the user message's `system` field and can be seen by the
-main model, title generation, or compaction. The currently verified OpenCode
-App version is 1.18.11. MCP search remains available when radar is disabled.
+</details>
 
 ## Documentation
 
 For users:
 
-- [User guide](docs/user-guide.md) — daily memory operations, scope, backup,
-  recovery, privacy, and host behavior.
-- [Install and upgrade](docs/installation.md) — supported systems, verified
-  installation, upgrades, paths, and uninstall.
+- [User guide](docs/user-guide.md) — first use, daily memory, scope, review, backup, and common problems.
+- [Install and upgrade](docs/installation.md) — supported platforms, trusted installation, upgrades, configuration, paths, and uninstall.
 
 For maintainers and contributors:
 
-- [Architecture](docs/architecture.md) — invariants, storage, search, locking,
-  recovery, MCP, and host adapters.
-- [Testing and validation](docs/testing.md) — golden contracts, black-box
-  suites, scale checks, and native CI.
-- [Maintainer release guide](docs/release-guide.md) — build, supply-chain
-  checks, release candidates, and GitHub Releases.
-- [Third-party notices](THIRD_PARTY_NOTICES.md) — dependency and Unicode
-  licensing.
+- [Architecture](docs/architecture.md) — data, retrieval, concurrency, recovery, security, and host integration.
+- [Testing and validation](docs/testing.md) — which checks to run for each kind of change and what a release must pass.
+- [Maintainer release guide](docs/release-guide.md) — version decisions, builds, four-platform validation, and GitHub Releases.
+- [Third-party notices](THIRD_PARTY_NOTICES.md) — licensing for dependencies and Unicode data.
 
 ## Current boundaries
 
-- The data directory is supported only on a local filesystem. NFS, SMB,
-  synchronized cloud folders, and removable media are outside the consistency
-  guarantee.
-- OpenCode request radar is disabled by default and version-gated; MCP remains
-  the stable integration path.
-- Retrieval is deterministic and lexical today. Semantic retrieval is on the
-  roadmap.
-- Release artifacts include an SBOM, upstream licenses, checksums, per-file
-  manifests, and GitHub build provenance, but current public packages are not
-  platform-signed.
-- English documentation is available, while most v0.1 runtime messages and
-  MCP-facing descriptions remain Chinese.
+- The data directory is supported only on a local filesystem. NFS, SMB, synchronized cloud folders, and removable media are outside the consistency guarantee.
+- OpenCode automatic hints are disabled by default and version-gated. Natural-language retrieval remains available.
+- Retrieval currently relies mainly on deterministic text and identifier matching. Semantic retrieval remains on the roadmap.
+- Release packages include checksums, a per-file manifest, dependency metadata, and GitHub build provenance, but current packages are not platform-signed.
+- English documentation is complete, while most current runtime messages and MCP-facing descriptions remain Chinese.
 
 Engramark is licensed under the [MIT License](LICENSE).

@@ -21,7 +21,7 @@ pub const CODEX_MCP_END: &str = "# engramark-end codex-mcp";
 pub const CODEX_PROJECT_BEGIN: &str = "# engramark-begin project-cwd";
 pub const CODEX_PROJECT_END: &str = "# engramark-end project-cwd";
 
-const AGENT_BLOCK_TEMPLATE: &str = include_str!("../../docs/agent_block.txt");
+const AGENT_BLOCK_TEMPLATE: &str = include_str!("../../adapters/shared/agent_block.txt");
 const HOOKS_TEMPLATE: &str = include_str!("../../adapters/codex/hooks.json");
 const OPENCODE_PLUGIN: &str = include_str!("../../adapters/opencode/engramark.js");
 

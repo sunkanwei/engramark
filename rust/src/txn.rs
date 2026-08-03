@@ -252,7 +252,7 @@ pub fn commit_source_changes(
     {
         let conn = cache::open_write(
             &layout.index(),
-            std::time::Duration::from_secs_f64(crate::lock::LOCK_TIMEOUT),
+            std::time::Duration::from_secs_f64(crate::lock::DATABASE_TIMEOUT),
         )
         .map_err(|err| Error::cache(err.to_string()))?;
         cache::apply_write_pragmas(&conn).map_err(|err| Error::cache(err.to_string()))?;
@@ -518,7 +518,7 @@ pub fn recover_transactions(layout: &Layout) -> Result<Vec<Json>> {
         if cache_ok {
             match cache::open_write(
                 &layout.index(),
-                std::time::Duration::from_secs_f64(crate::lock::LOCK_TIMEOUT),
+                std::time::Duration::from_secs_f64(crate::lock::DATABASE_TIMEOUT),
             ) {
                 Ok(conn) => {
                     if cache::apply_write_pragmas(&conn).is_err()

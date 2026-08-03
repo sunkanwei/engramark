@@ -87,9 +87,9 @@ def main() -> int:
         install = run(install_command, home, timeout=300)
         check("安装成功", install.returncode == 0, install.stderr[-500:])
         app = (home / "AppData" / "Local" / "Engramark" if os.name == "nt"
-               else home / ".local" / "share" / "engramark")
+               else home / ".local" / "share" / "engramark").resolve()
         binary = app / "bin" / ("engramark.exe" if os.name == "nt" else "engramark")
-        data = home / "engramark"
+        data = (home / "engramark").resolve()
         check("二进制与数据目录就位", binary.is_file() and (data / "cards").is_dir(), "")
         check("安装包不含旧 Python 运行时",
               not (app / "runtime").exists() and not any(app.rglob("*.py")), "")
@@ -109,8 +109,9 @@ def main() -> int:
 
         codex_config = (home / ".codex" / "config.toml").read_text()
         open_config = (home / ".config" / "opencode" / "opencode.jsonc").read_text()
-        check("宿主接线指向新二进制", str(binary) in codex_config
-              and str(binary) in open_config and "mcp_server.py" not in codex_config, "")
+        encoded_binary = json.dumps(str(binary), ensure_ascii=False)
+        check("宿主接线指向新二进制", encoded_binary in codex_config
+              and encoded_binary in open_config and "mcp_server.py" not in codex_config, "")
         check("OpenCode 插件已安装",
               (home / ".config" / "opencode" / "plugins" / "engramark.js").is_file(), "")
         hooks_text = (home / ".codex" / "hooks.json").read_text()

@@ -10,7 +10,8 @@ use std::time::{Duration, Instant};
 use crate::paths::Layout;
 use crate::{Error, Result};
 
-pub const LOCK_TIMEOUT: f64 = 5.0;
+pub const LOCK_TIMEOUT: f64 = 30.0;
+pub const DATABASE_TIMEOUT: f64 = 5.0;
 
 fn lock_timeout_env() -> f64 {
     std::env::var("ENGRAMARK_LOCK_TIMEOUT")

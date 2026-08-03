@@ -157,7 +157,8 @@ def write_sbom(destination: Path, version: str, target: str, rust_target: str,
 
 
 def copy_dependency_licenses(destination: Path, metadata: dict) -> None:
-    licenses = destination / "licenses"
+    # Keep this distinct from the root LICENSE on case-insensitive filesystems.
+    licenses = destination / "third-party-licenses"
     crates = licenses / "crates"
     crates.mkdir(parents=True)
     shutil.copy2(RUST / "assets" / "unicode" / "unicode-license.txt",
@@ -181,8 +182,13 @@ def copy_dependency_licenses(destination: Path, metadata: dict) -> None:
 
 def write_file_manifest(destination: Path) -> None:
     lines = []
+    casefolded_paths: dict[str, str] = {}
     for path in sorted(destination.rglob("*"), key=lambda item: item.relative_to(destination).as_posix()):
         relative = path.relative_to(destination).as_posix()
+        previous = casefolded_paths.setdefault(relative.casefold(), relative)
+        if previous != relative:
+            raise SystemExit(
+                f"release staging has a case-insensitive path collision: {previous} / {relative}")
         if path.is_symlink():
             raise SystemExit(f"release staging contains symlink: {relative}")
         if path.is_dir():

@@ -101,6 +101,7 @@ try {
     }
     $Stage = Join-Path $TempRoot "engramark"
     Expand-Archive -Path $PackagePath -DestinationPath $TempRoot
+    $Stage = (Get-Item $Stage).FullName
     $Binary = Join-Path $Stage "bin\engramark.exe"
     if (-not (Test-Path $Binary)) { throw "安装包缺少原生二进制。" }
     $Manifest = Join-Path $Stage "MANIFEST.tsv"
@@ -141,7 +142,7 @@ try {
         if ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) {
             throw "解包结果包含重解析点：$($_.FullName)"
         }
-        $_.FullName.Substring($Stage.Length + 1).Replace("\", "/")
+        [IO.Path]::GetRelativePath($Stage, $_.FullName).Replace("\", "/")
     }
     if ($ActualPaths.Count -ne $ExpectedPaths.Count -or
         @($ActualPaths | Where-Object { -not $ExpectedPaths.Contains($_) }).Count -ne 0) {

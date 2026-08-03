@@ -1183,7 +1183,7 @@ pub fn cache_reader(layout: &Layout) -> Result<CacheReader> {
     let shared = FileLock::acquire(layout, "cache.swap", true, None)?;
     let conn = open_readonly(
         &layout.index(),
-        Duration::from_secs_f64(crate::lock::LOCK_TIMEOUT),
+        Duration::from_secs_f64(crate::lock::DATABASE_TIMEOUT),
     )
     .map_err(|err| Error::cache(format!("缓存读取失败：{err}")))?;
     let complete: Option<String> = conn
